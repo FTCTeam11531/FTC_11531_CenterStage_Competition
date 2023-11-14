@@ -34,7 +34,7 @@ public class sysIntakeArm {
     private List<DcMotorEx> listMotorsIntake, listMotorsArm;
 
     private Servo slotOneIntakeServo, slotTwoIntakeServo, pivotIntakeServo, droneLaunchServo;
-    private CRServo sweeperIntakeServo;
+    private CRServo sweeperLeftIntakeServo, sweeperRightIntakeServo;
 
     private DistanceSensor limitSlotOneSensor, limitSlotTwoSensor;
 
@@ -52,7 +52,8 @@ public class sysIntakeArm {
         listMotorsIntake = Arrays.asList(stageOneIntake, stageTwoIntake);
 
         // Intake Servo
-        sweeperIntakeServo = sysOpMode.hardwareMap.get(CRServo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER);
+        sweeperLeftIntakeServo = sysOpMode.hardwareMap.get(CRServo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT);
+        sweeperRightIntakeServo = sysOpMode.hardwareMap.get(CRServo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT);
         slotOneIntakeServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE);
         slotTwoIntakeServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO);
         pivotIntakeServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT);
@@ -79,7 +80,9 @@ public class sysIntakeArm {
         setArmMotorZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
         resetArm();
 
-        sweeperIntakeServo.setPower(utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
+        // Servo Initialization Point(s)
+        sweeperLeftIntakeServo.setPower(utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
+        sweeperRightIntakeServo.setPower(utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
         pivotIntakeServo.setPosition(utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
         slotOneIntakeServo.setPosition(utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_INIT);
         slotTwoIntakeServo.setPosition(utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_INIT);
@@ -145,8 +148,11 @@ public class sysIntakeArm {
             case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT):
                 outPosition = pivotIntakeServo.getPosition();
                 break;
-            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER):
-                outPosition = sweeperIntakeServo.getPower();
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT):
+                outPosition = sweeperLeftIntakeServo.getPower();
+                break;
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT):
+                outPosition = sweeperRightIntakeServo.getPower();
                 break;
             default:
                 outPosition = 0;
@@ -207,15 +213,25 @@ public class sysIntakeArm {
             case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT):
                 pivotIntakeServo.setPosition(inTargetPosition);
                 break;
-            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER):
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT):
                 // Set Continuous Servo direction
                 if(inTargetPosition < 0) {
-                    sweeperIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+                    sweeperLeftIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
                 }
                 else {
-                    sweeperIntakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
+                    sweeperLeftIntakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
                 }
-                sweeperIntakeServo.setPower(Math.abs(inTargetPosition));
+                sweeperLeftIntakeServo.setPower(Math.abs(inTargetPosition));
+                break;
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT):
+                // Set Continuous Servo direction
+                if(inTargetPosition < 0) {
+                    sweeperRightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+                }
+                else {
+                    sweeperRightIntakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
+                }
+                sweeperRightIntakeServo.setPower(Math.abs(inTargetPosition));
                 break;
         }
 

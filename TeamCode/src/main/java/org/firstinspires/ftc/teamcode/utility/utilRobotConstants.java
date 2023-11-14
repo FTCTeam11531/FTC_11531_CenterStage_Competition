@@ -92,7 +92,8 @@ public class utilRobotConstants {
         public static final String LABEL_INTAKE_MOTOR_STAGE_ONE = "stage_one_intake";
         public static final String LABEL_INTAKE_MOTOR_STAGE_TWO = "stage_two_intake";
 
-        public static final String LABEL_INTAKE_SERVO_SWEEPER = "sweeper_intake_servo";
+        public static final String LABEL_INTAKE_SERVO_SWEEPER_LEFT = "sweeper_left_intake_servo";
+        public static final String LABEL_INTAKE_SERVO_SWEEPER_RIGHT = "sweeper_right_intake_servo";
         public static final String LABEL_INTAKE_SERVO_SLOT_ONE = "slot_one_servo_intake";
         public static final String LABEL_INTAKE_SERVO_SLOT_TWO = "slot_two_servo_intake";
         public static final String LABEL_INTAKE_SERVO_PIVOT = "pivot_intake";
