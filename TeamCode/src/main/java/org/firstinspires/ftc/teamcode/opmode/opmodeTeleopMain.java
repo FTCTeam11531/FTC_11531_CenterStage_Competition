@@ -205,13 +205,15 @@ public class opmodeTeleopMain extends LinearOpMode {
             // Button Action - Set Output Power Mode to High
             if(gamepad1.right_bumper) {
 //                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.High;
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
             }
 
             // Button Action - Set Output Power Mode to Medium
             if(!gamepad1.right_bumper) {
 //                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.Medium;
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
             }
 
             // Button Action - Set Output Power Mode to Low

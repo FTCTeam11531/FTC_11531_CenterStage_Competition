@@ -80,8 +80,8 @@ public class utilRobotConstants {
         public static final String LABEL_CONTROLHUB_IMU = "imu_ch";
         public static final String LABEL_EXPANSIONHUB_IMU = "imu_eh";
 
-        public static final RevHubOrientationOnRobot.LogoFacingDirection CONTROLHUB_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        public static final RevHubOrientationOnRobot.UsbFacingDirection CONTROLHUB_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        public static final RevHubOrientationOnRobot.LogoFacingDirection CONTROLHUB_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+        public static final RevHubOrientationOnRobot.UsbFacingDirection CONTROLHUB_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
 
         // Lighting
         public static final String LABEL_CONTROLLER_LIGHTING = "lighting_control";
@@ -100,6 +100,7 @@ public class utilRobotConstants {
 
         public static final String LABEL_INTAKE_SENSOR_SLOT_ONE = "slot_one_sensor_intake";
         public static final String LABEL_INTAKE_SENSOR_SLOT_TWO = "slot_two_sensor_intake";
+        public static final String LABEL_INTAKE_SENSOR_TRACKING = "intake_tracker_sensor";
 
         // Arm
         public static final String LABEL_ARM_MOTOR_LEFT_SIDE = "left_side_arm";
@@ -107,6 +108,7 @@ public class utilRobotConstants {
 
         // Endgame - Drone
         public static final String LABEL_DRONE_LAUNCH_SERVO_MAIN = "drone_launch_servo";
+        public static final String LABEL_DRONE_PIVOT_SERVO_MAIN = "drone_pivot_servo";
 
         // Vision
         public static final String LABEL_FRONT_AI_CAMERA = "front_ai_camera";
