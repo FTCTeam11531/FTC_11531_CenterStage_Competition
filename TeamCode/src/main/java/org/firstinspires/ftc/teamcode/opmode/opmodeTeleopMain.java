@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.system.sysIntakeArm;
 import org.firstinspires.ftc.teamcode.system.sysLighting;
@@ -43,7 +46,7 @@ public class opmodeTeleopMain extends LinearOpMode {
     sysDrivetrainMecanum sysDrivetrain = new sysDrivetrainMecanum(this);
 
     // Vision System
-//    sysVision sysVision = new sysVision(this);
+    sysVision sysVision = new sysVision(this);
 
     // Intake / Arm
     sysIntakeArm sysIntakeArm = new sysIntakeArm(this);
@@ -59,8 +62,10 @@ public class opmodeTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         // Configure Telemetry
         // ------------------------------------------------------------
+        Telemetry telemetry = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+
         // Set telemetry mode to append
-        telemetry.setAutoClear(false);
+//        telemetry.setAutoClear(false);
         telemetry.clearAll();
 
         // ------------------------------------------------------------
@@ -74,7 +79,7 @@ public class opmodeTeleopMain extends LinearOpMode {
         sysDrivetrain.init();
         sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_DRIVETRAIN);
 
-//        sysVision.init();
+        sysVision.init();
         sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_VISION);
 
         sysIntakeArm.init();
@@ -89,12 +94,12 @@ public class opmodeTeleopMain extends LinearOpMode {
         // Configure Vision
         // ------------------------------------------------------------
         // Set AI Camera Mode
-//        sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_APRILTAG);
+        sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_APRILTAG);
 
         // ------------------------------------------------------------
         // Variables for OpMode
         // ------------------------------------------------------------
-        double inputAxial, inputLateral, inputYaw;
+        double inputAxial, inputLateral, inputYaw, prevPixelTrackerMeasure;
         boolean isManualSlideMode = false;
 
         // ------------------------------------------------------------
@@ -121,7 +126,7 @@ public class opmodeTeleopMain extends LinearOpMode {
         // Configure Telemetry
         // ------------------------------------------------------------
         // Set telemetry mode to auto-clear
-        telemetry.setAutoClear(true);
+//        telemetry.setAutoClear(true);
         telemetry.clearAll();
 
         // Starting LED mode
@@ -152,18 +157,14 @@ public class opmodeTeleopMain extends LinearOpMode {
             // -- Robot Movement
             // -- -- Axis (left_stick_x, left_stick_y): Drive
             // -- -- Axis (right_stick_x): Rotate
-            // -- -- X: Set Output Speed to High
-            // -- -- Y: Set Output Speed to Med
-            // -- -- A: Set Output Speed to Low
-            // -- -- B: Set Output Speed to Snail
-            //
-            // -- Drive Mode Settings
-            // -- -- D-Pad Left: Field Centric Mode
-            // -- -- D-Pad Left: Robot Centric Mode
             //
             // -- Intake
             // -- -- Left Bumper (hold): Intake Normal - into robot
-            // -- -- Right Bumper (hold): Intake Reverse - eject from robot
+            // -- -- Right Bumper (hold): Drivetrain Speed - Low
+            //
+            // -- Endgame
+            // -- -- Back (hold) [co-driver needed]: Drone Launch
+            // -- -- Start (hold) [co-driver needed]: Drone Reset
             //
             // -- Override Settings
             // -- -- D-Pad Up + X: Reset Heading Override (and Raw)
@@ -171,8 +172,23 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Gamepad2 = Co-Driver
             // ------------------------------------------------------------
-            // NA
+            // -- Arm Movement
+            // -- -- Axis (right_stick_x): Up/Down
+            // -- -- Y: Arm Setpoint - High
+            // -- -- A: Arm Setpoint - Home
+            // -- -- B: Arm Setpoint - Preclimb
+            // -- -- X: Arm Setpoint - Hang
 
+            // -- Endgame
+            // -- -- Back (hold) [main-driver needed]: Drone Launch
+            // -- -- Start (hold) [main-driver needed]: Drone Reset
+            //
+            // -- Sleeve
+            // -- -- D-Pad Up: Sleeve Pivot - Board
+            // -- -- D-Pad Down: Sleeve Pivot - Home
+            // -- -- D-Pad Left: Sleeve Release
+            // -- -- D-Pad Right: Sleeve Lock
+            //
             // ------------------------------------------------------------
             // Drivetrain
             // ------------------------------------------------------------
@@ -181,9 +197,9 @@ public class opmodeTeleopMain extends LinearOpMode {
             // -- robot orientation to field
             // -- installed direction of control hub
             // -- orientation of drivetrain/motors
-            inputYaw =  -(gamepad1.right_stick_x);
-            inputAxial = gamepad1.left_stick_y;
-            inputLateral = -(gamepad1.left_stick_x);
+            inputYaw =  (gamepad1.right_stick_x);
+            inputAxial = -(gamepad1.left_stick_y);
+            inputLateral = (gamepad1.left_stick_x);
 
             // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
             if(sysDrivetrain.getLabelDrivetrainMode().equals(utilRobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
@@ -197,6 +213,13 @@ public class opmodeTeleopMain extends LinearOpMode {
 
             if(gamepad1.left_bumper) {
                 sysIntakeArm.activateIntake(1);
+
+                if(sysIntakeArm.counterPixelCount >= utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
+                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT);
+                }
+                else {
+                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
+                }
             }
 
             if(!gamepad1.left_bumper) {
@@ -215,28 +238,38 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Intake / Arm
             // ------------------------------------------------------------
-//            if(gamepad2.dpad_down) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
-//            }
+            if(gamepad2.dpad_down) {
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
+            }
 //
-//            if(gamepad2.dpad_up) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-//            }
+            if(gamepad2.dpad_up) {
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
+            }
 //
-//            if(gamepad2.dpad_left) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
-//            }
+            if(gamepad2.dpad_left) {
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
+                sysIntakeArm.resetPixelTracking();
+                sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
+            }
 //
-//            if(gamepad2.dpad_right) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
-//            }
+            if(gamepad2.dpad_right) {
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
+            }
 //
+            if(sysIntakeArm.getArmLowerLimit()) {
+                sysIntakeArm.resetArmEncoder();
+            }
 
             if(Math.abs(gamepad2.right_stick_y) >= .25) {
                 isManualSlideMode = true;
                 if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) >= 0 && sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) <= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_MAX) {
-                    sysIntakeArm.moveArmManually(-(gamepad2.right_stick_y), utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
+                    if(sysIntakeArm.getArmLowerLimit()) {
+                        sysIntakeArm.moveArmManually(-(Math.abs(gamepad2.right_stick_y)), utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
+                    }
+                    else {
+                        sysIntakeArm.moveArmManually(-(gamepad2.right_stick_y), utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
+                    }
                 }
             }
             else {
@@ -270,19 +303,23 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
 
 
+            // ------------------------------------------------------------
+            // Sensor
+            // ------------------------------------------------------------
+            sysIntakeArm.checkSensorPixelTracking();
 
             // ------------------------------------------------------------
             // Override
             // ------------------------------------------------------------
             // Button Action - Reset Heading Override (and Raw)
-//            if(gamepad1.dpad_up && gamepad1.x) {
-//
-//                // Reset the Robot Heading (normally done on init of Drivetrain system)
-//                sysDrivetrain.resetZeroRobotHeading();
-//
-//                // Cycle Pause
-//                sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
-//            }
+            if(gamepad1.start && gamepad1.y) {
+
+                // Reset the Robot Heading (normally done on init of Drivetrain system)
+                sysDrivetrain.resetZeroRobotHeading();
+
+                // Cycle Pause
+                sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+            }
 
             // ------------------------------------------------------------
             // Endgame
@@ -362,12 +399,17 @@ public class opmodeTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Vision");
             telemetry.addData("-", "------------------------------");
-//            telemetry.addData("Camera Block Count", sysVision.getCameraObjectList().length);
-//            telemetry.addData("Alliance Color", sysVision.getDetectedAllianceTagColor());
+            telemetry.addData("Camera Block Count", sysVision.getCameraObjectList().length);
+            telemetry.addData("Alliance Color", sysVision.getDetectedAllianceTagColor());
 //            telemetry.addData("R-G-B", "%4, %4, %4"
 //                    , sysVision.getAllianceTagColorLevel("red")
 //                    , sysVision.getAllianceTagColorLevel("green")
 //                    , sysVision.getAllianceTagColorLevel("blue"));
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "-- Sensor");
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Intake Count", sysIntakeArm.counterPixelCount);
+            telemetry.addData("Pixel Tracking Sensor Distance", sysIntakeArm.getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING));
 
             // ------------------------------------------------------------
             // - Intake / Arm telemetry
@@ -394,11 +436,11 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // - send telemetry to driver hub
             // ------------------------------------------------------------
+            telemetry.update();
 
-            // Input assignment to 'pause' telemetry update(s)
-            if (!gamepad1.dpad_right) {
-                telemetry.update();
-            }
+//            // Input assignment to 'pause' telemetry update(s)
+//            if (!gamepad1.dpad_right) {
+//            }
 
             // Pace this loop so commands move at a reasonable speed.
             sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
