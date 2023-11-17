@@ -33,10 +33,12 @@ public class sysIntakeArm {
     private DcMotorEx stageOneIntake, stageTwoIntake, leftSideArm, rightSideArm;
     private List<DcMotorEx> listMotorsIntake, listMotorsArm;
 
-    private Servo slotOneIntakeServo, slotTwoIntakeServo, pivotIntakeServo, droneLaunchServo;
+    private Servo slotOneIntakeServo, slotTwoIntakeServo, pivotIntakeServo, droneLaunchServo, dronePivotServo;
     private CRServo sweeperLeftIntakeServo, sweeperRightIntakeServo;
 
-    private DistanceSensor limitSlotOneSensor, limitSlotTwoSensor;
+    private DistanceSensor limitSlotOneSensor, limitSlotTwoSensor, trackIntakeSensor;
+
+    public int counterPixelCollection = 0;
 
     public sysIntakeArm(LinearOpMode inOpMode) {
         sysOpMode = inOpMode;
@@ -52,15 +54,18 @@ public class sysIntakeArm {
         listMotorsIntake = Arrays.asList(stageOneIntake, stageTwoIntake);
 
         // Intake Servo
-//        sweeperLeftIntakeServo = sysOpMode.hardwareMap.get(CRServo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT);
-//        sweeperRightIntakeServo = sysOpMode.hardwareMap.get(CRServo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT);
+        sweeperLeftIntakeServo = sysOpMode.hardwareMap.get(CRServo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT);
+        sweeperRightIntakeServo = sysOpMode.hardwareMap.get(CRServo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT);
         slotOneIntakeServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE);
         slotTwoIntakeServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO);
         pivotIntakeServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT);
-//        droneLaunchServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN);
+
+        droneLaunchServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN);
+        dronePivotServo = sysOpMode.hardwareMap.get(Servo.class, utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN);
 
 //        limitSlotOneSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_SLOT_ONE);
 //        limitSlotTwoSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_SLOT_TWO);
+        trackIntakeSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING);
 
         // Arm
         leftSideArm = sysOpMode.hardwareMap.get(DcMotorEx.class, utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE);
@@ -81,13 +86,14 @@ public class sysIntakeArm {
         resetArm();
 
         // Servo Initialization Point(s)
-//        sweeperLeftIntakeServo.setPower(utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
-//        sweeperRightIntakeServo.setPower(utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
+        sweeperLeftIntakeServo.setPower(utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
+        sweeperRightIntakeServo.setPower(utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
         pivotIntakeServo.setPosition(utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
         slotOneIntakeServo.setPosition(utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_INIT);
         slotTwoIntakeServo.setPosition(utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_INIT);
 
-//        droneLaunchServo.setPosition(utilRobotConstants.IntakeArm.SERVO_DRONE_LAUNCH_SETPOINT_INIT);
+        droneLaunchServo.setPosition(utilRobotConstants.IntakeArm.SERVO_DRONE_LAUNCH_SETPOINT_INIT);
+        dronePivotServo.setPosition(utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_INIT);
 
         // Display telemetry
         sysOpMode.telemetry.addData(">", "------------------------------------");
@@ -100,12 +106,25 @@ public class sysIntakeArm {
 
         // Power Intake Motors
         setIntakeMotorPower(inIntakePower);
+
+        if(counterPixelCollection < 2) {
+            // Spin forward - into intake
+            setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
+            setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
+        }
+        else {
+            // Spin backward - keep out
+            setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
+            setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
+        }
     }
 
     public void deactivateIntake() {
 
         // Stop Intake Motors
         setIntakeMotorPower(0);
+        setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
+        setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
     }
 
     public void resetArm() {
@@ -148,12 +167,18 @@ public class sysIntakeArm {
             case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT):
                 outPosition = pivotIntakeServo.getPosition();
                 break;
-//            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT):
-//                outPosition = sweeperLeftIntakeServo.getPower();
-//                break;
-//            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT):
-//                outPosition = sweeperRightIntakeServo.getPower();
-//                break;
+            case(utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN):
+                outPosition = droneLaunchServo.getPosition();
+                break;
+            case(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN):
+                outPosition = dronePivotServo.getPosition();
+                break;
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT):
+                outPosition = sweeperLeftIntakeServo.getPower();
+                break;
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT):
+                outPosition = sweeperRightIntakeServo.getPower();
+                break;
             default:
                 outPosition = 0;
         }
@@ -170,6 +195,9 @@ public class sysIntakeArm {
                 break;
             case(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_SLOT_TWO):
                 outDistance = limitSlotTwoSensor.getDistance(utilRobotConstants.IntakeArm.LIMIT_SENSOR_DISTANCE_UNIT);
+                break;
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING):
+                outDistance = trackIntakeSensor.getDistance(utilRobotConstants.IntakeArm.LIMIT_SENSOR_DISTANCE_UNIT);
                 break;
             default:
                 outDistance = 0;
@@ -213,26 +241,32 @@ public class sysIntakeArm {
             case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT):
                 pivotIntakeServo.setPosition(inTargetPosition);
                 break;
-//            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT):
-//                // Set Continuous Servo direction
-//                if(inTargetPosition < 0) {
-//                    sweeperLeftIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
-//                }
-//                else {
-//                    sweeperLeftIntakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
-//                }
-//                sweeperLeftIntakeServo.setPower(Math.abs(inTargetPosition));
-//                break;
-//            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT):
-//                // Set Continuous Servo direction
-//                if(inTargetPosition < 0) {
-//                    sweeperRightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
-//                }
-//                else {
-//                    sweeperRightIntakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
-//                }
-//                sweeperRightIntakeServo.setPower(Math.abs(inTargetPosition));
-//                break;
+            case(utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN):
+                droneLaunchServo.setPosition(inTargetPosition);
+                break;
+            case(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN):
+                dronePivotServo.setPosition(inTargetPosition);
+                break;
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT):
+                // Set Continuous Servo direction
+                if(inTargetPosition < 0) {
+                    sweeperLeftIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+                }
+                else {
+                    sweeperLeftIntakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
+                }
+                sweeperLeftIntakeServo.setPower(Math.abs(inTargetPosition));
+                break;
+            case(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT):
+                // Set Continuous Servo direction
+                if(inTargetPosition < 0) {
+                    sweeperRightIntakeServo.setDirection(DcMotorSimple.Direction.REVERSE);
+                }
+                else {
+                    sweeperRightIntakeServo.setDirection(DcMotorSimple.Direction.FORWARD);
+                }
+                sweeperRightIntakeServo.setPower(Math.abs(inTargetPosition));
+                break;
         }
 
     }

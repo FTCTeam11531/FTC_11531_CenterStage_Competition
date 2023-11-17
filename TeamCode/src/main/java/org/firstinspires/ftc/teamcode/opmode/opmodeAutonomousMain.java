@@ -24,7 +24,7 @@ import org.firstinspires.ftc.teamcode.utility.utilRobotConstants;
  * </p>
  * <br>
  */
-@Autonomous(name = "Autonomous - Main", group = "smart", preselectTeleOp = "Teleop Main")
+@Autonomous(name = "Autonomous - Main", group = "_main", preselectTeleOp = "Teleop Main")
 //@Disabled
 public class opmodeAutonomousMain extends LinearOpMode {
     // ------------------------------------------------------------
@@ -238,7 +238,6 @@ public class opmodeAutonomousMain extends LinearOpMode {
                 }
             }
 
-
             // ------------------------------------------------------------
             // Driver Hub Feedback
             // ------------------------------------------------------------
@@ -268,8 +267,6 @@ public class opmodeAutonomousMain extends LinearOpMode {
 
             // Set Camera Mode
             sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_OBJECT_RECOGNITION);
-
-
 
             // Set Camera Mode
             sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_APRILTAG);

@@ -80,6 +80,10 @@ public class utilRobotConstants {
         public static final String LABEL_CONTROLHUB_IMU = "imu_ch";
         public static final String LABEL_EXPANSIONHUB_IMU = "imu_eh";
 
+        public static final String LABEL_DRIVETRAIN_ENCODER_LEFT = LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT;
+        public static final String LABEL_DRIVETRAIN_ENCODER_RIGHT = LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT;
+        public static final String LABEL_DRIVETRAIN_ENCODER_REAR = LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK;
+
         public static final RevHubOrientationOnRobot.LogoFacingDirection CONTROLHUB_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public static final RevHubOrientationOnRobot.UsbFacingDirection CONTROLHUB_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
 
@@ -351,6 +355,9 @@ public class utilRobotConstants {
         public static final double SERVO_DRONE_LAUNCH_SETPOINT_OPEN = 0.20;
         public static final double SERVO_DRONE_LAUNCH_SETPOINT_CLOSE = 0.60;
 
+        public static final double SERVO_DRONE_PIVOT_SETPOINT_INIT = 0.50;
+        public static final double SERVO_DRONE_PIVOT_SETPOINT_LAUNCH = 0.25;
+
         // Arm Settings
         public static final double ARM_MOTOR_OUTPUT_POWER_MAX = 0.75;
         public static final double ARM_MOTOR_OUTPUT_POWER_MIN = 0.25;
@@ -462,7 +469,7 @@ public class utilRobotConstants {
 
         // Lighting Enabled (True/False)
         // -- Only enabled if a lighting controller and lighting is installed on the robot
-        public static final boolean LIGHTING_ENABLED = false;
+        public static final boolean LIGHTING_ENABLED = true;
 
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_LIGHTING_CONTROLLER = "REV-11-1105 Blinkin LED Driver";
@@ -510,7 +517,7 @@ public class utilRobotConstants {
 
         // Light Patterns for Targeting
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_TARGET_JUNCTION_ZONE_ACTIVE = RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_ALERT_ENDGAME = RevBlinkinLedDriver.BlinkinPattern.STROBE_RED;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_ALERT_ENDGAME = RevBlinkinLedDriver.BlinkinPattern.BREATH_RED;
 
     }
 

@@ -28,7 +28,7 @@ import org.firstinspires.ftc.teamcode.utility.utilRobotConstants;
  * </p>
  * <br>
  */
-@TeleOp(name="Teleop Main", group="main")
+@TeleOp(name="Teleop Main", group="_main")
 //@Disabled
 public class opmodeTeleopMain extends LinearOpMode {
     // ------------------------------------------------------------
@@ -142,7 +142,7 @@ public class opmodeTeleopMain extends LinearOpMode {
         // ------------------------------------------------------------
         // Command Loop: run until the end of the match (driver presses STOP)
         // ------------------------------------------------------------
-        while (opModeIsActive()) {
+        while (opModeIsActive() && !isStopRequested()) {
 
             // ------------------------------------------------------------
             // Controls
@@ -204,85 +204,34 @@ public class opmodeTeleopMain extends LinearOpMode {
             }
             // Button Action - Set Output Power Mode to High
             if(gamepad1.right_bumper) {
-//                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.High;
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
+                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.Low;
             }
 
             // Button Action - Set Output Power Mode to Medium
             if(!gamepad1.right_bumper) {
-//                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.Medium;
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
+                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.Medium;
             }
-
-            // Button Action - Set Output Power Mode to Low
-//            if(gamepad1.a) {
-//                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.Low;
-//            }
-//
-//            // Button Action - Set Output Power Mode to Snail Mode
-//            if(gamepad1.b) {
-//                sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.Snail;
-//            }
-
-            // Button Action - Set drive mode to 'Field Centric'
-//            if(gamepad1.dpad_left) {
-//                sysDrivetrain.stateDrivetrainMode = enumStateDrivetrainMode.Field_Centric;
-//
-//                // Reset the Robot Heading (normally done on init of Drivetrain system)
-//                sysDrivetrain.resetZeroRobotHeading();
-//            }
-
-            // Button Action - Set drive mode to 'Robot Centric'
-//            if(gamepad1.dpad_right) {
-//                sysDrivetrain.stateDrivetrainMode = enumStateDrivetrainMode.Robot_Centric;
-//            }
 
             // ------------------------------------------------------------
             // Intake / Arm
             // ------------------------------------------------------------
-//            if(gamepad1.dpad_down) {
+//            if(gamepad2.dpad_down) {
 //                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
 //            }
 //
-//            if(gamepad1.dpad_up) {
+//            if(gamepad2.dpad_up) {
 //                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
 //            }
 //
-//            if(gamepad1.dpad_left) {
+//            if(gamepad2.dpad_left) {
 //                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
 //                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
 //            }
 //
-//            if(gamepad1.dpad_right) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_CLOSE);
-//            }
-//
-//            if(gamepad1.y) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
-//            }
-//
-//            if(gamepad1.x) {
+//            if(gamepad2.dpad_right) {
 //                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
 //            }
 //
-//            if(gamepad1.b) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
-//            }
-//
-//            if(gamepad1.a) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_CLOSE);
-//            }
-
-//            if(gamepad2.dpad_up) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE) - 0.05);
-//            }
-//
-//            if(gamepad2.dpad_down) {
-//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE) + 0.05);
-//            }
 
             if(Math.abs(gamepad2.right_stick_y) >= .25) {
                 isManualSlideMode = true;
@@ -326,20 +275,35 @@ public class opmodeTeleopMain extends LinearOpMode {
             // Override
             // ------------------------------------------------------------
             // Button Action - Reset Heading Override (and Raw)
-            if(gamepad1.dpad_up && gamepad1.x) {
-
-                // Reset the Robot Heading (normally done on init of Drivetrain system)
-                sysDrivetrain.resetZeroRobotHeading();
-
-                // Cycle Pause
-                sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
-            }
+//            if(gamepad1.dpad_up && gamepad1.x) {
+//
+//                // Reset the Robot Heading (normally done on init of Drivetrain system)
+//                sysDrivetrain.resetZeroRobotHeading();
+//
+//                // Cycle Pause
+//                sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+//            }
 
             // ------------------------------------------------------------
             // Endgame
             // ------------------------------------------------------------
             if(runtime.time() >= 120.00) {
                 sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_ALERT_ENDGAME);
+            }
+
+            if (gamepad1.back && gamepad2.back) {
+                double currentRuntime = getRuntime();
+
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_LAUNCH);
+                sleep(500);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_LAUNCH_SETPOINT_OPEN);
+            }
+
+            if (gamepad1.start && gamepad2.start) {
+                double currentRuntime = getRuntime();
+
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_INIT);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_LAUNCH_SETPOINT_INIT);
             }
 
             // ------------------------------------------------------------
