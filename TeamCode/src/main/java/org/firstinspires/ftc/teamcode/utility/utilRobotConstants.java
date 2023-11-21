@@ -238,7 +238,7 @@ public class utilRobotConstants {
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
         public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
-        public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
+        public static final double MOTOR_OUTPUT_POWER_MED = 0.85;
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
         public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.15;
 
@@ -364,15 +364,15 @@ public class utilRobotConstants {
         public static final double SERVO_DRONE_PIVOT_SETPOINT_LAUNCH = 0.25;
 
         // Arm Settings
-        public static final double ARM_MOTOR_OUTPUT_POWER_MAX = 0.75;
-        public static final double ARM_MOTOR_OUTPUT_POWER_MIN = 0.25;
+        public static final double ARM_MOTOR_OUTPUT_POWER_MAX = 1;
+        public static final double ARM_MOTOR_OUTPUT_POWER_MIN = 0.5;
 
         // Arm - Setpoints
         public static final int ARM_ENCODER_SETPOINT_HOME = 0;
         public static final int ARM_ENCODER_SETPOINT_MAX = 8200;
         public static final int ARM_ENCODER_SETPOINT_CRUISE = 800;
-        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 4500;
-        public static final int ARM_ENCODER_SETPOINT_HANG = 1200;
+        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 5000;
+        public static final int ARM_ENCODER_SETPOINT_HANG = 1300;
 
     }
 

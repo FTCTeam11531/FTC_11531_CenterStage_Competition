@@ -243,7 +243,9 @@ public class opmodeTeleopMain extends LinearOpMode {
             }
 //
             if(gamepad2.dpad_up) {
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
+                if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) >= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HANG) {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
+                }
             }
 //
             if(gamepad2.dpad_left) {
