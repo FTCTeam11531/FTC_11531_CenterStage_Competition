@@ -80,6 +80,10 @@ public class utilRobotConstants {
         public static final String LABEL_CONTROLHUB_IMU = "imu_ch";
         public static final String LABEL_EXPANSIONHUB_IMU = "imu_eh";
 
+        public static final String LABEL_DRIVETRAIN_ENCODER_LEFT = LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT;
+        public static final String LABEL_DRIVETRAIN_ENCODER_RIGHT = LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT;
+        public static final String LABEL_DRIVETRAIN_ENCODER_REAR = LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK;
+
         public static final RevHubOrientationOnRobot.LogoFacingDirection CONTROLHUB_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public static final RevHubOrientationOnRobot.UsbFacingDirection CONTROLHUB_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
 
@@ -100,7 +104,8 @@ public class utilRobotConstants {
 
         public static final String LABEL_INTAKE_SENSOR_SLOT_ONE = "slot_one_sensor_intake";
         public static final String LABEL_INTAKE_SENSOR_SLOT_TWO = "slot_two_sensor_intake";
-        public static final String LABEL_INTAKE_SENSOR_TRACKING = "intake_tracker_sensor";
+        public static final String LABEL_INTAKE_SENSOR_TRACKING = "intake_sensor_tracker";
+        public static final String LABEL_ARM_SENSOR_LIMIT_LOWER = "arm_sensor_lower_limit";
 
         // Arm
         public static final String LABEL_ARM_MOTOR_LEFT_SIDE = "left_side_arm";
@@ -233,7 +238,7 @@ public class utilRobotConstants {
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
         public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
-        public static final double MOTOR_OUTPUT_POWER_MED = 0.75;
+        public static final double MOTOR_OUTPUT_POWER_MED = 0.85;
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
         public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.15;
 
@@ -324,7 +329,11 @@ public class utilRobotConstants {
      */
     public static final class IntakeArm {
 
+        // Intake Sensor Settings
         public static final DistanceUnit LIMIT_SENSOR_DISTANCE_UNIT = DistanceUnit.INCH;
+        public static final double SENSOR_DISTANCE_SETPOINT_TRACKING_CLEAR = 0.80;
+        public static final double SENSOR_DISTANCE_SETPOINT_TRACKING_TRIP = 0.34;
+        public static final int COUNT_PIXEL_INTAKE_LIMIT = 2;
 
         // Servo Settings - Intake Sweeper
         public static final double SERVO_INTAKE_SWEEPER_SETPOINT_INIT = 0.0;
@@ -332,35 +341,39 @@ public class utilRobotConstants {
         public static final double SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL = -1.0;
 
         // Servo Settings - Pivot
-        public static final double SERVO_PIVOT_SETPOINT_HOME = 0.25;
-        public static final double SERVO_PIVOT_SETPOINT_BOARD = 0.50;
+        public static final double SERVO_PIVOT_SETPOINT_HOME = 0.50;
+        public static final double SERVO_PIVOT_SETPOINT_BOARD = 1;
 
         // Servo Settings - Pixel Slot
         public static final double SERVO_SLOTONE_SETPOINT_INIT = 0.50;
-        public static final double SERVO_SLOTONE_SETPOINT_OPEN = 0.60;
+        public static final double SERVO_SLOTONE_SETPOINT_OPEN = 1;
 
-        public static final double SERVO_SLOTONE_SETPOINT_CLOSE = 0.45;
+        public static final double SERVO_SLOTONE_SETPOINT_CLOSE = 0.50;
 
         public static final double SERVO_SLOTTWO_SETPOINT_INIT = 0.50;
-        public static final double SERVO_SLOTTWO_SETPOINT_OPEN = 0.40;
+        public static final double SERVO_SLOTTWO_SETPOINT_OPEN = 1;
 
-        public static final double SERVO_SLOTTWO_SETPOINT_CLOSE = 0.55;
+        public static final double SERVO_SLOTTWO_SETPOINT_CLOSE = 0.50;
 
         // Servo Settings - Endgame - Drone
         public static final double SERVO_DRONE_LAUNCH_SETPOINT_INIT = 0.50;
         public static final double SERVO_DRONE_LAUNCH_SETPOINT_OPEN = 0.20;
         public static final double SERVO_DRONE_LAUNCH_SETPOINT_CLOSE = 0.60;
 
+        public static final double SERVO_DRONE_PIVOT_SETPOINT_INIT = 0.50;
+        public static final double SERVO_DRONE_PIVOT_SETPOINT_LAUNCH = 0.25;
+
         // Arm Settings
-        public static final double ARM_MOTOR_OUTPUT_POWER_MAX = 0.75;
-        public static final double ARM_MOTOR_OUTPUT_POWER_MIN = 0.25;
+        public static final double ARM_MOTOR_OUTPUT_POWER_MAX = 1;
+        public static final double ARM_MOTOR_OUTPUT_POWER_MIN = 0.5;
 
         // Arm - Setpoints
         public static final int ARM_ENCODER_SETPOINT_HOME = 0;
         public static final int ARM_ENCODER_SETPOINT_MAX = 8200;
         public static final int ARM_ENCODER_SETPOINT_CRUISE = 800;
-        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 4500;
-        public static final int ARM_ENCODER_SETPOINT_HANG = 1200;
+        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 5000;
+        public static final int ARM_ENCODER_SETPOINT_HANG = 1300;
+
     }
 
     /**
@@ -397,8 +410,8 @@ public class utilRobotConstants {
         }
 
         // AI Camera Setpoints - Target Zone(s)
-        public static final int RANDOM_TARGET_ZONE_ONE_X = 100;
-        public static final int RANDOM_TARGET_ZONE_TWO_X = 200;
+        public static final int RANDOM_TARGET_ZONE_ONE_X = 150;
+        public static final int RANDOM_TARGET_ZONE_TWO_X = 300;
         public static final int RANDOM_TARGET_ZONE_THREE_X = 320;
 
 
@@ -462,7 +475,7 @@ public class utilRobotConstants {
 
         // Lighting Enabled (True/False)
         // -- Only enabled if a lighting controller and lighting is installed on the robot
-        public static final boolean LIGHTING_ENABLED = false;
+        public static final boolean LIGHTING_ENABLED = true;
 
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_LIGHTING_CONTROLLER = "REV-11-1105 Blinkin LED Driver";
@@ -496,13 +509,16 @@ public class utilRobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_THREE = RevBlinkinLedDriver.BlinkinPattern.RAINBOW_RAINBOW_PALETTE; // RAINBOW_RAINBOW_PALETTE
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID = LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID;
 
+        // Intake
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
+
+
         // Light Patterns for Robot State(s) - Linear Slide
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_MED = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_RAINBOW_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_LOW = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_OCEAN_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_GROUND = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_LAVA_PALETTE;
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_LIMIT_MAX = RevBlinkinLedDriver.BlinkinPattern.CP1_LARSON_SCANNER;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_DRIFT = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
 
         // Light Patterns for Robot State(s) - Claw
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_CLAW_CLAMP_OPEN = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE; // LIGHT_CHASE_RED
@@ -510,7 +526,7 @@ public class utilRobotConstants {
 
         // Light Patterns for Targeting
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_TARGET_JUNCTION_ZONE_ACTIVE = RevBlinkinLedDriver.BlinkinPattern.CP1_SHOT;
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_ALERT_ENDGAME = RevBlinkinLedDriver.BlinkinPattern.STROBE_RED;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_ALERT_ENDGAME = RevBlinkinLedDriver.BlinkinPattern.BREATH_RED;
 
     }
 

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -24,8 +25,8 @@ import org.firstinspires.ftc.teamcode.utility.utilRobotConstants;
  * </p>
  * <br>
  */
-@Autonomous(name = "Autonomous - Main", group = "smart", preselectTeleOp = "Teleop Main")
-//@Disabled
+@Autonomous(name = "tst: Camera", group = "_tst", preselectTeleOp = "Teleop Main")
+@Disabled
 public class opmodeAutonomousMain extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -238,7 +239,6 @@ public class opmodeAutonomousMain extends LinearOpMode {
                 }
             }
 
-
             // ------------------------------------------------------------
             // Driver Hub Feedback
             // ------------------------------------------------------------
@@ -268,8 +268,6 @@ public class opmodeAutonomousMain extends LinearOpMode {
 
             // Set Camera Mode
             sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_OBJECT_RECOGNITION);
-
-
 
             // Set Camera Mode
             sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_APRILTAG);
