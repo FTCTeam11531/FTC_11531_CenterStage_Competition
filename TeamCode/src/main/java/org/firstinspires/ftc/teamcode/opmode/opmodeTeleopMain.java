@@ -112,6 +112,10 @@ public class opmodeTeleopMain extends LinearOpMode {
         // Reset runtime clock
         runtime.reset();
 
+        // Set Intake Servos - deviated from initialization
+        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
+        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
+
         sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_SYSTEM_INIT_COMPLETE);
 
         // Repeat while in initialize state (disable if using waitForStart)
@@ -211,20 +215,6 @@ public class opmodeTeleopMain extends LinearOpMode {
                 sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
             }
 
-            if(gamepad1.left_bumper) {
-                sysIntakeArm.activateIntake(1);
-
-                if(sysIntakeArm.counterPixelCount >= utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
-                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT);
-                }
-                else {
-                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
-                }
-            }
-
-            if(!gamepad1.left_bumper) {
-                sysIntakeArm.deactivateIntake();
-            }
             // Button Action - Set Output Power Mode to High
             if(gamepad1.right_bumper) {
                 sysDrivetrain.stateDriveMotorMaxOutputPower = enumStateDriveMotorMaxOutputPower.Low;
@@ -238,35 +228,76 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Intake / Arm
             // ------------------------------------------------------------
+
+            // Intake - Activate
+            if(gamepad1.left_bumper) {
+
+                if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) <= utilRobotConstants.IntakeArm.ARM_ENCODER_LIMIT_CHECK_INTAKE) {
+                    sysIntakeArm.activateIntake(utilRobotConstants.IntakeArm.INTAKE_MOTOR_OUTPUT_POWER_MAX);
+                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
+                }
+                else {
+                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_INTAKE_UNAVAILABLE);
+                }
+
+                if(sysIntakeArm.counterIntakeUpper >= utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
+                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT_UPPER);
+                }
+                else if(sysIntakeArm.counterIntakeLower >= utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
+                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT_LOWER);
+                }
+                else {
+                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
+                }
+            }
+
+            // Intake - Reverse
+            if(gamepad1.dpad_left) {
+                sysIntakeArm.reverseIntake();
+            }
+
+            // Intake - Deactivate when not pressing buttons
+            if(!gamepad1.left_bumper && !gamepad1.dpad_left) {
+                sysIntakeArm.deactivateIntake();
+            }
+
+            // Intake Pivot - Home
             if(gamepad2.dpad_down) {
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
             }
-//
+
+            // Intake Pivot - Board
             if(gamepad2.dpad_up) {
                 if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) >= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HANG) {
                     sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
                 }
             }
-//
+
+            // Intake Slot - Open
             if(gamepad2.dpad_left) {
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
+                sleep(1500);
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
+
                 sysIntakeArm.resetPixelTracking();
                 sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
             }
-//
+
+            // Intake Slot - Close
             if(gamepad2.dpad_right) {
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
             }
-//
-            if(sysIntakeArm.getArmLowerLimit()) {
+
+            // Reset Ground when hit limit
+            if(sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER)) {
                 sysIntakeArm.resetArmEncoder();
             }
 
+            // Arm - Manual Control
             if(Math.abs(gamepad2.right_stick_y) >= .25) {
                 isManualSlideMode = true;
                 if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) >= 0 && sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) <= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_MAX) {
-                    if(sysIntakeArm.getArmLowerLimit()) {
+                    if(sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER)) {
                         sysIntakeArm.moveArmManually(-(Math.abs(gamepad2.right_stick_y)), utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
                     }
                     else {
@@ -280,24 +311,37 @@ public class opmodeTeleopMain extends LinearOpMode {
                 }
             }
 
+            // Arm Setpoint - High
             if(gamepad2.y) {
                 isManualSlideMode = false;
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_CLOSE);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
                 sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_MAX, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
             }
 
+            // Arm Setpoint - Hang
             if(gamepad2.x) {
                 isManualSlideMode = false;
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_CLOSE);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
                 sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HANG, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
             }
 
+            // Arm Setpoint - Pre-Climb
             if(gamepad2.b) {
                 isManualSlideMode = false;
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_CLOSE);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
                 sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
             }
 
+            // Arm Setpoint - Home
             if(gamepad2.a) {
                 isManualSlideMode = false;
-                sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
+                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
+                sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
             }
 
             // ------------------------------------------------------------
@@ -326,7 +370,7 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Endgame
             // ------------------------------------------------------------
-            if(runtime.time() >= 120.00) {
+            if(runtime.time() >= 120.00 && runtime.time() <= 150.00) {
                 sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_ALERT_ENDGAME);
             }
 
@@ -411,6 +455,8 @@ public class opmodeTeleopMain extends LinearOpMode {
             telemetry.addData("-", "-- Sensor");
             telemetry.addData("-", "------------------------------");
             telemetry.addData("Intake Count", sysIntakeArm.counterPixelCount);
+            telemetry.addData("Intake - Lower - Count", sysIntakeArm.counterIntakeLower);
+            telemetry.addData("Intake - Upper - Count", sysIntakeArm.counterIntakeUpper);
             telemetry.addData("Pixel Tracking Sensor Distance", sysIntakeArm.getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING));
 
             // ------------------------------------------------------------
@@ -419,11 +465,14 @@ public class opmodeTeleopMain extends LinearOpMode {
             telemetry.addData("-", "------------------------------");
             telemetry.addData("-", "-- Intake / Arm");
             telemetry.addData("-", "------------------------------");
-//            telemetry.addData("Pivot Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT));
-//            telemetry.addData("Slot One Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE));
-//            telemetry.addData("Slot Two Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO));
+            telemetry.addData("Pivot Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT));
+            telemetry.addData("Slot One Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE));
+            telemetry.addData("Slot Two Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO));
             telemetry.addData("Arm Position - Left", sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE));
             telemetry.addData("Arm Position - Right", sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_RIGHT_SIDE));
+            telemetry.addData("Arm Limit - Lower", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER));
+            telemetry.addData("Intake Counter - Lower", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER));
+            telemetry.addData("Intake Counter - Upper", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER));
 
             // ------------------------------------------------------------
             // - Lighting telemetry

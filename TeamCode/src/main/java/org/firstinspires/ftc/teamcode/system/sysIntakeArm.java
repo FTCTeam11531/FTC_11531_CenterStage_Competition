@@ -37,10 +37,10 @@ public class sysIntakeArm {
     private Servo slotOneIntakeServo, slotTwoIntakeServo, pivotIntakeServo, droneLaunchServo, dronePivotServo;
     private CRServo sweeperLeftIntakeServo, sweeperRightIntakeServo;
     private DistanceSensor limitSlotOneSensor, limitSlotTwoSensor, trackIntakeSensor;
-    private TouchSensor limitArmLowerSensor;
+    private TouchSensor limitArmLowerSensor, limitIntakeCountCheckLower, limitIntakeCountCheckUpper;
 
-    public int counterPixelCount = 0;
-    private boolean isPixelFound = false;
+    public int counterPixelCount = 0, counterIntakeLower = 0, counterIntakeUpper = 0;
+    private boolean isPixelFoundCounter = false, isPixelFoundIntakeLower = false, isPixelFoundIntakeUpper = false;
 
     public sysIntakeArm(LinearOpMode inOpMode) {
         sysOpMode = inOpMode;
@@ -69,6 +69,8 @@ public class sysIntakeArm {
 //        limitSlotTwoSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_SLOT_TWO);
         trackIntakeSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING);
         limitArmLowerSensor = sysOpMode.hardwareMap.get(TouchSensor.class, utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER);
+        limitIntakeCountCheckLower = sysOpMode.hardwareMap.get(TouchSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER);
+        limitIntakeCountCheckUpper = sysOpMode.hardwareMap.get(TouchSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER);
 
         // Arm
         leftSideArm = sysOpMode.hardwareMap.get(DcMotorEx.class, utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE);
@@ -107,18 +109,29 @@ public class sysIntakeArm {
 
     public void activateIntake(double inIntakePower) {
 
-        // Power Intake Motors
-        setIntakeMotorPower(inIntakePower);
-
-        if(counterPixelCount < utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
-            // Spin forward - into intake
+        // Reverse Stage One
+        if(counterIntakeLower < utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT && counterIntakeUpper < utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
+            // Sweeper - Spin forward - into intake
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
         }
         else {
-            // Spin backward - keep out
+            //Sweeper - Spin backward - keep out
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
+
+        }
+
+        // Reverse Stage Two
+        if(counterIntakeUpper < utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
+
+            // Power Intake Motors - Forward
+            setIntakeMotorPower(inIntakePower);
+        }
+        else {
+
+            // Power Intake Motors - Reverse
+            setIntakeMotorPower(-inIntakePower);
 
         }
     }
@@ -131,20 +144,49 @@ public class sysIntakeArm {
         setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
     }
 
+    public void reverseIntake() {
+
+        // Power Intake Motors - Reverse
+        setIntakeMotorPower(-(utilRobotConstants.IntakeArm.INTAKE_MOTOR_OUTPUT_POWER_MAX));
+
+        //Sweeper - Spin backward - keep out
+        setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
+        setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
+    }
+
     public void checkSensorPixelTracking() {
 
-        if(getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING) > utilRobotConstants.IntakeArm.SENSOR_DISTANCE_SETPOINT_TRACKING_CLEAR && isPixelFound) {
+        if(getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING) > utilRobotConstants.IntakeArm.SENSOR_DISTANCE_SETPOINT_TRACKING_CLEAR && isPixelFoundCounter) {
             counterPixelCount ++;
-            isPixelFound = false;
+            isPixelFoundCounter = false;
         }
         else if (getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING) < utilRobotConstants.IntakeArm.SENSOR_DISTANCE_SETPOINT_TRACKING_CLEAR) {
-            isPixelFound = true;
+            isPixelFoundCounter = true;
+        }
+
+        if(!getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER) && isPixelFoundIntakeLower) {
+            counterIntakeLower ++;
+            isPixelFoundIntakeLower = false;
+        }
+        else if (getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER)) {
+            isPixelFoundIntakeLower = true;
+        }
+
+        if(!getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER) && isPixelFoundIntakeUpper) {
+            counterIntakeUpper ++;
+            isPixelFoundIntakeUpper = false;
+        }
+        else if (getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER)) {
+            isPixelFoundIntakeUpper = true;
         }
 
     }
 
     public void resetPixelTracking() {
+
         counterPixelCount = 0;
+        counterIntakeLower = 0;
+        counterIntakeUpper = 0;
     }
 
     public void resetArmEncoder() {
@@ -226,6 +268,31 @@ public class sysIntakeArm {
         return outDistance;
     }
 
+    public boolean getLimitSensorTripped(String inSensorLabel) {
+        boolean outLimitSensorTripped = false;
+
+        // Get boolean value from Touch Sensor
+        switch (inSensorLabel) {
+            // Arm Limit Ground Sensor
+            case utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER:
+                outLimitSensorTripped = limitArmLowerSensor.isPressed();
+                break;
+            // Intake Lower Check
+            case utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER:
+                outLimitSensorTripped = limitIntakeCountCheckLower.isPressed();
+                break;
+            // Intake Upper Check
+            case utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER:
+                outLimitSensorTripped = limitIntakeCountCheckUpper.isPressed();
+                break;
+            // Default - No match
+            default:
+                outLimitSensorTripped = false;
+        }
+
+        return outLimitSensorTripped;
+    }
+
     public int getArmCurrentPosition(String inMotorLabel) {
         // Variable for output Power value for drivetrain motor(s)
         int outEncoderPosition;
@@ -247,10 +314,6 @@ public class sysIntakeArm {
 
         // Return value
         return outEncoderPosition;
-    }
-
-    public boolean getArmLowerLimit() {
-        return limitArmLowerSensor.isPressed();
     }
 
     public void setIntakeServoPosition(String inIntakeServoName, double inTargetPosition) {

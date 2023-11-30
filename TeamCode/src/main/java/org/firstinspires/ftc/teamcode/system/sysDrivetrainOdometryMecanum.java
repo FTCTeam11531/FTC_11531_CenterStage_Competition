@@ -30,6 +30,7 @@ import com.acmerobotics.roadrunner.trajectory.constraints.ProfileAccelerationCon
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryAccelerationConstraint;
 import com.acmerobotics.roadrunner.trajectory.constraints.TrajectoryVelocityConstraint;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -95,10 +96,10 @@ public class sysDrivetrainOdometryMecanum extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-//        imu = hardwareMap.get(IMU.class, utilRobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
-//        imu.initialize(parameters);
+        imu = hardwareMap.get(IMU.class, utilRobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                utilRobotConstants.Configuration.CONTROLHUB_LOGO_DIRECTION, utilRobotConstants.Configuration.CONTROLHUB_USB_DIRECTION));
+        imu.initialize(parameters);
 
         leftFront = hardwareMap.get(DcMotorEx.class, utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT);
         leftRear = hardwareMap.get(DcMotorEx.class, utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK);
@@ -125,8 +126,8 @@ public class sysDrivetrainOdometryMecanum extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
         rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
         List<Integer> lastTrackingEncPositions = new ArrayList<>();

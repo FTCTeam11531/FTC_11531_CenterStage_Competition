@@ -96,10 +96,10 @@ public class SampleMecanumDrive extends MecanumDrive {
         }
 
         // TODO: adjust the names of the following hardware devices to match your configuration
-//        imu = hardwareMap.get(IMU.class, utilRobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
-//        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
-//                DriveConstants.LOGO_FACING_DIR, DriveConstants.USB_FACING_DIR));
-//        imu.initialize(parameters);
+        imu = hardwareMap.get(IMU.class, utilRobotConstants.Configuration.LABEL_CONTROLHUB_IMU);
+        IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
+                utilRobotConstants.Configuration.CONTROLHUB_LOGO_DIRECTION, utilRobotConstants.Configuration.CONTROLHUB_USB_DIRECTION));
+        imu.initialize(parameters);
 
         leftFront = hardwareMap.get(DcMotorEx.class, utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT);
         leftRear = hardwareMap.get(DcMotorEx.class, utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK);

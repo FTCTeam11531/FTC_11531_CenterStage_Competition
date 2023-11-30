@@ -105,6 +105,9 @@ public class utilRobotConstants {
         public static final String LABEL_INTAKE_SENSOR_SLOT_ONE = "slot_one_sensor_intake";
         public static final String LABEL_INTAKE_SENSOR_SLOT_TWO = "slot_two_sensor_intake";
         public static final String LABEL_INTAKE_SENSOR_TRACKING = "intake_sensor_tracker";
+
+        public static final String LABEL_INTAKE_COUNT_CHECK_LOWER = "intake_count_lower_limit";
+        public static final String LABEL_INTAKE_COUNT_CHECK_UPPER = "intake_count_upper_limit";
         public static final String LABEL_ARM_SENSOR_LIMIT_LOWER = "arm_sensor_lower_limit";
 
         // Arm
@@ -238,9 +241,9 @@ public class utilRobotConstants {
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
         public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
-        public static final double MOTOR_OUTPUT_POWER_MED = 0.85;
-        public static final double MOTOR_OUTPUT_POWER_LOW = 0.50;
-        public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.15;
+        public static final double MOTOR_OUTPUT_POWER_MED = 0.85; // normal run-mode
+        public static final double MOTOR_OUTPUT_POWER_LOW = 0.40; // lowered 11.27 - from .50 to .40
+        public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.25;
 
         /**
          * <h2>Convert: Encoder Ticks to Inches</h2>
@@ -329,6 +332,10 @@ public class utilRobotConstants {
      */
     public static final class IntakeArm {
 
+        // Intake Settings
+        public static final double INTAKE_MOTOR_OUTPUT_POWER_MAX = 1;
+        public static final double INTAKE_MOTOR_OUTPUT_POWER_MIN = 0.5;
+
         // Intake Sensor Settings
         public static final DistanceUnit LIMIT_SENSOR_DISTANCE_UNIT = DistanceUnit.INCH;
         public static final double SENSOR_DISTANCE_SETPOINT_TRACKING_CLEAR = 0.80;
@@ -369,11 +376,12 @@ public class utilRobotConstants {
 
         // Arm - Setpoints
         public static final int ARM_ENCODER_SETPOINT_HOME = 0;
-        public static final int ARM_ENCODER_SETPOINT_MAX = 8200;
+        public static final int ARM_ENCODER_SETPOINT_MAX = 4300; // was 8200 (replaced motor)
         public static final int ARM_ENCODER_SETPOINT_CRUISE = 800;
-        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 5000;
-        public static final int ARM_ENCODER_SETPOINT_HANG = 1300;
+        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 2600; // was 5000 (replaced motor)
+        public static final int ARM_ENCODER_SETPOINT_HANG = 680; // was 1300 (replaced motor)
 
+        public static final int ARM_ENCODER_LIMIT_CHECK_INTAKE = 50;
     }
 
     /**
@@ -510,8 +518,9 @@ public class utilRobotConstants {
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_AUTONOMOUS_ZONE_PARK_INVALID = LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_INVALID;
 
         // Intake
-        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT = RevBlinkinLedDriver.BlinkinPattern.CONFETTI;
-
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT_UPPER = RevBlinkinLedDriver.BlinkinPattern.SINELON_LAVA_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_INTAKE_CAPACITY_LIMIT_LOWER = RevBlinkinLedDriver.BlinkinPattern.SINELON_OCEAN_PALETTE;
+        public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_INTAKE_UNAVAILABLE = RevBlinkinLedDriver.BlinkinPattern.HEARTBEAT_RED;
 
         // Light Patterns for Robot State(s) - Linear Slide
         public static final RevBlinkinLedDriver.BlinkinPattern LIGHT_PATTERN_LINEAR_SLIDE_GOAL_HIGH = RevBlinkinLedDriver.BlinkinPattern.BEATS_PER_MINUTE_PARTY_PALETTE;
