@@ -67,7 +67,7 @@ public class sysIntakeArm {
 
 //        limitSlotOneSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_SLOT_ONE);
 //        limitSlotTwoSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_SLOT_TWO);
-        trackIntakeSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING);
+//        trackIntakeSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING);
         limitArmLowerSensor = sysOpMode.hardwareMap.get(TouchSensor.class, utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER);
         limitIntakeCountCheckLower = sysOpMode.hardwareMap.get(TouchSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER);
         limitIntakeCountCheckUpper = sysOpMode.hardwareMap.get(TouchSensor.class, utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER);
@@ -110,12 +110,15 @@ public class sysIntakeArm {
     public void activateIntake(double inIntakePower) {
 
         // Reverse Stage One
-        if(counterIntakeLower < utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT && counterIntakeUpper < utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
+        if(counterIntakeLower < utilRobotConstants.IntakeArm.COUNT_PIXEL_INTAKE_LIMIT) {
             // Sweeper - Spin forward - into intake
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
         }
         else {
+            // Activate Slot Two Servo
+            setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_CLOSE);
+
             //Sweeper - Spin backward - keep out
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_REVERSE_FULL);
             setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_FORWARD_FULL);
@@ -258,9 +261,9 @@ public class sysIntakeArm {
             case(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_SLOT_TWO):
                 outDistance = limitSlotTwoSensor.getDistance(utilRobotConstants.IntakeArm.LIMIT_SENSOR_DISTANCE_UNIT);
                 break;
-            case(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING):
-                outDistance = trackIntakeSensor.getDistance(utilRobotConstants.IntakeArm.LIMIT_SENSOR_DISTANCE_UNIT);
-                break;
+//            case(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING):
+//                outDistance = trackIntakeSensor.getDistance(utilRobotConstants.IntakeArm.LIMIT_SENSOR_DISTANCE_UNIT);
+//                break;
             default:
                 outDistance = 0;
         }

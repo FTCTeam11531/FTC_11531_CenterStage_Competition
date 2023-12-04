@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -57,6 +58,9 @@ public class sysDrivetrainMecanum {
     private IMU imuUnit = null;
     private IMU.Parameters imuParameters;
 
+    // Define Hardware - Sensors
+    private DistanceSensor collisionLeftSensor, collisionRightSensor;
+
     private double trackHeadingRobot, trackHeadingOffset, trackHeadingError;
 
     public sysDrivetrainMecanum(LinearOpMode inOpMode) {
@@ -98,6 +102,9 @@ public class sysDrivetrainMecanum {
         rightFrontDrive.setDirection(DcMotorEx.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotorEx.Direction.REVERSE);
         rightBackDrive.setDirection(DcMotorEx.Direction.FORWARD);
+
+        collisionLeftSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_LEFT);
+        collisionRightSensor = sysOpMode.hardwareMap.get(DistanceSensor.class, utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_RIGHT);
 
         // When using the newer IMU class be sure to initialize the IMU based on the orientation
         // of the Control Hub to the robot.
@@ -727,6 +734,23 @@ public class sysDrivetrainMecanum {
 
         // Return value
         return outEncoderValue;
+    }
+
+    public double getSensorDistanceCollision(String inRangeSensorName) {
+        double outDistance;
+
+        switch(inRangeSensorName) {
+            case(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_LEFT):
+                outDistance = collisionLeftSensor.getDistance(utilRobotConstants.Drivetrain.LIMIT_SENSOR_DISTANCE_UNIT);
+                break;
+            case(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_RIGHT):
+                outDistance = collisionRightSensor.getDistance(utilRobotConstants.Drivetrain.LIMIT_SENSOR_DISTANCE_UNIT);
+                break;
+            default:
+                outDistance = 0;
+        }
+
+        return outDistance;
     }
 
     /**

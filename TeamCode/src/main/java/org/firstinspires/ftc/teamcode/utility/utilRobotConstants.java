@@ -87,6 +87,9 @@ public class utilRobotConstants {
         public static final RevHubOrientationOnRobot.LogoFacingDirection CONTROLHUB_LOGO_DIRECTION = RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
         public static final RevHubOrientationOnRobot.UsbFacingDirection CONTROLHUB_USB_DIRECTION = RevHubOrientationOnRobot.UsbFacingDirection.DOWN;
 
+        public static final String LABEL_DRIVETRAIN_SENSOR_COLLISION_LEFT = "collision_sensor_left";
+        public static final String LABEL_DRIVETRAIN_SENSOR_COLLISION_RIGHT = "collision_sensor_right";
+
         // Lighting
         public static final String LABEL_CONTROLLER_LIGHTING = "lighting_control";
 
@@ -245,6 +248,12 @@ public class utilRobotConstants {
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.40; // lowered 11.27 - from .50 to .40
         public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.25;
 
+        // Sensor Settings
+        public static final double SENSOR_COLLISION_LEFT_BOARD_RANGE = 3.5;
+        public static final double SENSOR_COLISION_RIGHT_BOARD_RANGE = SENSOR_COLLISION_LEFT_BOARD_RANGE;
+        public static final DistanceUnit LIMIT_SENSOR_DISTANCE_UNIT = DistanceUnit.INCH;
+
+
         /**
          * <h2>Convert: Encoder Ticks to Inches</h2>
          * <hr>
@@ -352,15 +361,13 @@ public class utilRobotConstants {
         public static final double SERVO_PIVOT_SETPOINT_BOARD = 1;
 
         // Servo Settings - Pixel Slot
-        public static final double SERVO_SLOTONE_SETPOINT_INIT = 0.50;
+        public static final double SERVO_SLOTONE_SETPOINT_INIT = 0.40;
         public static final double SERVO_SLOTONE_SETPOINT_OPEN = 1;
+        public static final double SERVO_SLOTONE_SETPOINT_CLOSE = 0.40;
 
-        public static final double SERVO_SLOTONE_SETPOINT_CLOSE = 0.50;
-
-        public static final double SERVO_SLOTTWO_SETPOINT_INIT = 0.50;
+        public static final double SERVO_SLOTTWO_SETPOINT_INIT = 0.64;
         public static final double SERVO_SLOTTWO_SETPOINT_OPEN = 1;
-
-        public static final double SERVO_SLOTTWO_SETPOINT_CLOSE = 0.50;
+        public static final double SERVO_SLOTTWO_SETPOINT_CLOSE = 0.64;
 
         // Servo Settings - Endgame - Drone
         public static final double SERVO_DRONE_LAUNCH_SETPOINT_INIT = 0.50;

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.acmerobotics.roadrunner.drive.Drive;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
@@ -12,10 +13,12 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import org.firstinspires.ftc.teamcode.system.sysDrivetrainOdometryMecanum;
 import org.firstinspires.ftc.teamcode.system.sysIntakeArm;
 import org.firstinspires.ftc.teamcode.system.sysLighting;
 import org.firstinspires.ftc.teamcode.system.sysVision;
+import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.utilRobotConstants;
 
 @Config
@@ -112,7 +115,7 @@ public class opmodeAutonomousTesting extends LinearOpMode {
         // Configure Telemetry
         // ------------------------------------------------------------
         // Set telemetry mode to auto-clear
-        telemetry.setAutoClear(true);
+//        telemetry.setAutoClear(true);
         telemetry.clearAll();
 
         while(opModeInInit() && !isStopRequested()) {
@@ -222,16 +225,153 @@ public class opmodeAutonomousTesting extends LinearOpMode {
         // ----------------------------------------------------
         // Defined Trajectories
         // ----------------------------------------------------
+        // TODO: clean up logic
         // ----------------------
         // TESTING!!!!!
         // ----------------------
-        Trajectory trajTestZone1 = sysDrivetrain.trajectoryBuilder(startPose, false)
-                .lineToSplineHeading(new Pose2d(-32, -26, Math.toRadians(90)))
+
+        TrajectorySequence trajSeqBlueAudienceZone1 = sysDrivetrain.trajectorySequenceBuilder(startPose)
+                // Move to Random Zone 1
+                .lineToSplineHeading(new Pose2d(-36, -31, Math.toRadians(90)))
+
+                // Place Purple Pixel
+                .addTemporalMarker(() -> {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
+                })
+                .waitSeconds(2)
+
+                // Move to Cycle Lane
+                .lineToSplineHeading(new Pose2d(-14, -39, Math.toRadians(87)))
+
+                // Move Across Field - to other side
+                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
+
+                // Move to board
+                .lineToSplineHeading(new Pose2d(-36, 48, Math.toRadians(90)))
+
+                // Action - Raise Arm
+                .addTemporalMarker(() -> {
+
+                    // Raise Arm
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+
+                })
+                .waitSeconds(2)
+
+                // Move a little closer to board
+                .splineTo(
+                        new Vector2d(-36, 52), Math.toRadians(90),
+                        sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                )
+
+                // Place Yellow Pixel
+                .addTemporalMarker(() -> {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
+                })
+                .waitSeconds(2)
+
+                // Lower Arm
+                .addTemporalMarker(() -> {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
+                })
+                .waitSeconds(2)
+
+                // Drive to home
+                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(0)))
+
                 .build();
 
-        Trajectory trajTestZone1V2 = sysDrivetrain.trajectoryBuilder(startPose, false)
-                .lineTo(new Vector2d(-32, -26))
+
+
+        // Position One
+        Trajectory trajZoneOneMoveToZone = sysDrivetrain.trajectoryBuilder(startPose, false)
+                .lineToSplineHeading(new Pose2d(-36, -31, Math.toRadians(90)))
+                .addTemporalMarker(2, () -> {
+
+                    // Place Purple Pixel
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
+                })
                 .build();
+
+        Trajectory trajZoneOneMoveToCycle = sysDrivetrain.trajectoryBuilder(trajZoneOneMoveToZone.end(), false)
+                .lineToSplineHeading(new Pose2d(-14, -39, Math.toRadians(87)))
+                .build();
+
+
+        // Position Two
+//        Trajectory trajZoneTwoMoveToZoneNew = sysDrivetrain.trajectoryBuilder(startPose, false)
+//                .lineToSplineHeading(new Pose2d(-18, -34, Math.toRadians(180)))
+//                .addTemporalMarker(2, () -> {
+//
+//                    // Place Purple Pixel
+//                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
+//                })
+//                .build();
+//
+//        Trajectory trajZoneTwoMoveToZone = sysDrivetrain.trajectoryBuilder(startPose, false)
+//                .forward(36)
+//                .addTemporalMarker(2, () -> {
+//
+//                    // Place Purple Pixel
+//                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
+//                })
+//                .build();
+
+//        Trajectory trajZoneTwoMoveToCycleStageOne = sysDrivetrain.trajectoryBuilder(trajZoneTwoMoveToZone.end(), false)
+//                .strafeRight(18)
+//                .build();
+//
+//        Trajectory trajZoneTwoMoveToCycleStageTwo = sysDrivetrain.trajectoryBuilder(trajZoneTwoMoveToCycleStageOne.end(), false)
+//                .lineToSplineHeading(new Pose2d(-14, -39, Math.toRadians(87)))
+//                .build();
+
+
+
+        // Move forward
+        Trajectory trajMoveAcrossField = sysDrivetrain.trajectoryBuilder(trajZoneOneMoveToCycle.end(), false)
+                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
+                .build();
+
+        // Move to board
+        Trajectory trajMovetoBoard = sysDrivetrain.trajectoryBuilder(trajMoveAcrossField.end(), false)
+                .lineToSplineHeading(new Pose2d(-36, 48, Math.toRadians(90)))
+                .addTemporalMarker(1, () -> {
+
+                        // Raise Arm
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+
+                })
+                .build();
+
+        Trajectory trajPlacePixel = sysDrivetrain.trajectoryBuilder(trajMovetoBoard.end(), false)
+                .splineTo(
+                        new Vector2d(-36, 52), Math.toRadians(90),
+                        sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
+                )
+
+                .addTemporalMarker(1, () -> {
+
+                    // Place Yellow Pixel
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
+                })
+                .build();
+
+        // Move to home
+        Trajectory trajMovetoHome = sysDrivetrain.trajectoryBuilder(trajMovetoBoard.end(), false)
+                .addTemporalMarker(1, () -> {
+
+                    // Lower Arm
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
+                })
+                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(0)))
+                .build();
+
 
         // ----------------------
         // Same for ALL
@@ -413,15 +553,68 @@ public class opmodeAutonomousTesting extends LinearOpMode {
         // ----------------------
         // Same for ALL
         // ----------------------
-        // Move to Random Zone
-        sysDrivetrain.followTrajectory(trajTestZone1V2);
-        sysDrivetrain.turn(Math.toRadians(90));
 
-        poseEstimate = sysDrivetrain.getPoseEstimate();
-        telemetry.addData("finalX", poseEstimate.getX());
-        telemetry.addData("finalY", poseEstimate.getY());
-        telemetry.addData("finalHeading", poseEstimate.getHeading());
-        telemetry.update();
+
+        // Blue - Audience - Zone 1
+        sysDrivetrain.followTrajectorySequence(trajSeqBlueAudienceZone1);
+
+        // Move to Zone One
+//        sysDrivetrain.followTrajectory(trajZoneOneMoveToZone);
+//
+//        sysDrivetrain.followTrajectory(trajZoneOneMoveToCycle);
+//
+//        sysDrivetrain.followTrajectory(trajMoveAcrossField);
+//
+//        sysDrivetrain.followTrajectory(trajMovetoBoard);
+//
+//        sysDrivetrain.followTrajectory(trajPlacePixel);
+//
+//        sysDrivetrain.followTrajectory(trajMovetoHome);
+
+        // Move to Zone Two
+//        sysDrivetrain.followTrajectory(trajZoneTwoMoveToZone);
+//
+//        poseEstimate = sysDrivetrain.getPoseEstimate();
+//        telemetry.addData("-", "");
+//        telemetry.addData("-", "------------------------------");
+//        telemetry.addData("-", "Zone Two - Move to Zone");
+//        telemetry.addData("-", "------------------------------");
+//        telemetry.addData("finalX", poseEstimate.getX());
+//        telemetry.addData("finalY", poseEstimate.getY());
+//        telemetry.addData("finalHeading", poseEstimate.getHeading());
+//        telemetry.update();
+
+//        sysDrivetrain.followTrajectory(trajZoneTwoMoveToCycleStageOne);
+//
+//        poseEstimate = sysDrivetrain.getPoseEstimate();
+//        telemetry.addData("-", "");
+//        telemetry.addData("-", "------------------------------");
+//        telemetry.addData("-", "Zone Two - Move to Cycle Stage One");
+//        telemetry.addData("-", "------------------------------");
+//        telemetry.addData("finalX", poseEstimate.getX());
+//        telemetry.addData("finalY", poseEstimate.getY());
+//        telemetry.addData("finalHeading", poseEstimate.getHeading());
+//        telemetry.update();
+
+//        sysDrivetrain.followTrajectory(trajZoneTwoMoveToCycleStageTwo);
+//
+//        poseEstimate = sysDrivetrain.getPoseEstimate();
+//        telemetry.addData("-", "");
+//        telemetry.addData("-", "------------------------------");
+//        telemetry.addData("-", "Zone Two - Move to Cycle Stage Two");
+//        telemetry.addData("-", "------------------------------");
+//        telemetry.addData("finalX", poseEstimate.getX());
+//        telemetry.addData("finalY", poseEstimate.getY());
+//        telemetry.addData("finalHeading", poseEstimate.getHeading());
+//        telemetry.update();
+
+
+
+
+
+
+
+
 
 //        // Determine Zone Angle
 //        switch (targetZone){
@@ -488,9 +681,9 @@ public class opmodeAutonomousTesting extends LinearOpMode {
 //        telemetry.addData("finalHeading", poseEstimate.getHeading());
 //        telemetry.update();
 
-        // Place Purple Pixel
-        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
-        sleep(300);
+//        // Place Purple Pixel
+//        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
+//        sleep(300);
 
 //        // Clear the Pixel
 //        sysDrivetrain.followTrajectory(trajClearPixel);

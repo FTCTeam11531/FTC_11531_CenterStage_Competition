@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -205,15 +204,18 @@ public class opmodeTeleopMain extends LinearOpMode {
             inputAxial = -(gamepad1.left_stick_y);
             inputLateral = (gamepad1.left_stick_x);
 
-            // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
-            if(sysDrivetrain.getLabelDrivetrainMode().equals(utilRobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
-                // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
-                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
-            }
-            else {
-                // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
-                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
-            }
+            // Set Field Centric as the only Drivetrain
+            sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
+
+//            // Drivetrain Type determined by 'Drivetrain Mode' enumeration selection (Default to Field Centric)
+//            if(sysDrivetrain.getLabelDrivetrainMode().equals(utilRobotConstants.Drivetrain.LIST_MODE_TYPE_DRIVETRAIN_ROBOTCENTRIC)) {
+//                // Send gamepad input for drivetrain to driveMecanum method in the drivetrain system class
+//                sysDrivetrain.driveMecanum(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
+//            }
+//            else {
+//                // Send gamepad input for drivetrain to driveMecanumFieldCentric method in the drivetrain system class
+//                sysDrivetrain.driveMecanumFieldCentric(inputAxial, inputLateral, inputYaw, sysDrivetrain.getValueDrivetrainOutputPower());
+//            }
 
             // Button Action - Set Output Power Mode to High
             if(gamepad1.right_bumper) {
@@ -249,32 +251,33 @@ public class opmodeTeleopMain extends LinearOpMode {
                 else {
                     sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_DEFAULT_TELEOP);
                 }
+
             }
 
             // Intake - Reverse
-            if(gamepad1.dpad_left) {
+            if(gamepad1.a) {
                 sysIntakeArm.reverseIntake();
             }
 
             // Intake - Deactivate when not pressing buttons
-            if(!gamepad1.left_bumper && !gamepad1.dpad_left) {
+            if(!gamepad1.left_bumper && !gamepad1.a) {
                 sysIntakeArm.deactivateIntake();
             }
 
             // Intake Pivot - Home
-            if(gamepad2.dpad_down) {
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
-            }
+//            if(gamepad2.dpad_down) {
+//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
+//            }
 
             // Intake Pivot - Board
-            if(gamepad2.dpad_up) {
-                if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) >= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HANG) {
-                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-                }
-            }
+//            if(gamepad2.dpad_up) {
+//                if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) >= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HANG) {
+//                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
+//                }
+//            }
 
             // Intake Slot - Open
-            if(gamepad2.dpad_left) {
+            if(gamepad2.left_bumper) {
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
                 sleep(1500);
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO, utilRobotConstants.IntakeArm.SERVO_SLOTTWO_SETPOINT_OPEN);
@@ -284,9 +287,9 @@ public class opmodeTeleopMain extends LinearOpMode {
             }
 
             // Intake Slot - Close
-            if(gamepad2.dpad_right) {
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
-            }
+//            if(gamepad2.dpad_right) {
+//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_CLOSE);
+//            }
 
             // Reset Ground when hit limit
             if(sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER)) {
@@ -370,7 +373,7 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Endgame
             // ------------------------------------------------------------
-            if(runtime.time() >= 120.00 && runtime.time() <= 150.00) {
+            if(runtime.time() >= 90.00 && runtime.time() <= 120.00) {
                 sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_ALERT_ENDGAME);
             }
 
@@ -438,6 +441,9 @@ public class opmodeTeleopMain extends LinearOpMode {
             telemetry.addData("Robot Angle Velocity - Yaw (Z)", sysDrivetrain.getRobotAngularVelocity().zRotationRate);
             telemetry.addData("Robot Angle Velocity - Pitch (X)", sysDrivetrain.getRobotAngularVelocity().xRotationRate);
             telemetry.addData("Robot Angle Velocity - Yaw (Z)", sysDrivetrain.getRobotAngularVelocity().yRotationRate);
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("Collision Detection - Left", sysDrivetrain.getSensorDistanceCollision(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_LEFT));
+            telemetry.addData("Collision Detection - Right", sysDrivetrain.getSensorDistanceCollision(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_RIGHT));
 
             // ------------------------------------------------------------
             // - Vision telemetry
@@ -457,7 +463,7 @@ public class opmodeTeleopMain extends LinearOpMode {
             telemetry.addData("Intake Count", sysIntakeArm.counterPixelCount);
             telemetry.addData("Intake - Lower - Count", sysIntakeArm.counterIntakeLower);
             telemetry.addData("Intake - Upper - Count", sysIntakeArm.counterIntakeUpper);
-            telemetry.addData("Pixel Tracking Sensor Distance", sysIntakeArm.getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING));
+//            telemetry.addData("Pixel Tracking Sensor Distance", sysIntakeArm.getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING));
 
             // ------------------------------------------------------------
             // - Intake / Arm telemetry
