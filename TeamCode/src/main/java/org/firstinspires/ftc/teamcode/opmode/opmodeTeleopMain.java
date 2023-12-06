@@ -93,7 +93,8 @@ public class opmodeTeleopMain extends LinearOpMode {
         // Configure Vision
         // ------------------------------------------------------------
         // Set AI Camera Mode
-        sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_APRILTAG);
+//        sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_APRILTAG);
+        sysVision.setAICameraMode(utilRobotConstants.Vision.AI_Camera.AI_CAMERA_MODE_OBJECT_TRACKING);
 
         // ------------------------------------------------------------
         // Variables for OpMode
@@ -230,6 +231,13 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // Intake / Arm
             // ------------------------------------------------------------
+            if(!isManualSlideMode) {
+                if (sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) <= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HANG) {
+                    sysIntakeArm.setArmMotorPower(utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
+                } else {
+                    sysIntakeArm.setArmMotorPower(utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                }
+            }
 
             // Intake - Activate
             if(gamepad1.left_bumper) {
@@ -347,6 +355,24 @@ public class opmodeTeleopMain extends LinearOpMode {
                 sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
             }
 
+            // Manual Control of pixel sleeve - to board
+            if(gamepad2.dpad_up) {
+
+                if(sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) <= utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD) {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) + 0.05);
+                }
+
+            }
+
+            // Manual Control of pixel sleeve - to home
+            if(gamepad2.dpad_down) {
+
+                if(sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) >= utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME) {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) - 0.05);
+                }
+
+            }
+
             // ------------------------------------------------------------
             // Vision
             // ------------------------------------------------------------
@@ -380,115 +406,116 @@ public class opmodeTeleopMain extends LinearOpMode {
             if (gamepad1.back && gamepad2.back) {
                 double currentRuntime = getRuntime();
 
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_LAUNCH);
-                sleep(500);
+//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_LAUNCH);
+//                sleep(500);
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_LAUNCH_SETPOINT_OPEN);
             }
 
             if (gamepad1.start && gamepad2.start) {
                 double currentRuntime = getRuntime();
 
-                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_INIT);
+//                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_INIT);
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_LAUNCH_SETPOINT_INIT);
             }
 
-            // ------------------------------------------------------------
-            // Driver Hub Feedback
-            // ------------------------------------------------------------
-            telemetry.addData("Run Time", runtime.toString());
 
-            // ------------------------------------------------------------
-            // - Gamepad telemetry
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Gamepad");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Gamepad 1 - [Y] Axial", "%4.2f", gamepad1.left_stick_y);
-            telemetry.addData("Gamepad 1 - [X] Lateral", "%4.2f", gamepad1.left_stick_x);
-            telemetry.addData("Gamepad 1 - [R] Rotation", "%4.2f", gamepad1.right_stick_x);
-
-            // ------------------------------------------------------------
-            // - Drivetrain telemetry
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Drivetrain");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Drivetrain Mode", sysDrivetrain.getLabelDrivetrainMode());
-            telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Power Front left/Right", "%4.2f, %4.2f"
-                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-            telemetry.addData("Power Back  left/Right", "%4.2f, %4.2f"
-                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Encoder Front left/Right", "%7d, %7d"
-                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
-                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
-            telemetry.addData("Encoder Back  left/Right", "%7d, %7d"
-                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
-                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Robot Heading Raw", sysDrivetrain.getRobotHeadingRaw());
-            telemetry.addData("Heading Adjustment", utilRobotConstants.CommonSettings.getImuTransitionAdjustment());
-            telemetry.addData("Robot Heading (Adjusted)", sysDrivetrain.getRobotHeadingAdj());
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Robot Angle - Yaw (Z)", sysDrivetrain.getRobotAngles().getYaw(AngleUnit.DEGREES));
-            telemetry.addData("Robot Angle - Pitch (X)", sysDrivetrain.getRobotAngles().getPitch(AngleUnit.DEGREES));
-            telemetry.addData("Robot Angle - Yaw (Z)", sysDrivetrain.getRobotAngles().getRoll(AngleUnit.DEGREES));
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Robot Angle Velocity - Yaw (Z)", sysDrivetrain.getRobotAngularVelocity().zRotationRate);
-            telemetry.addData("Robot Angle Velocity - Pitch (X)", sysDrivetrain.getRobotAngularVelocity().xRotationRate);
-            telemetry.addData("Robot Angle Velocity - Yaw (Z)", sysDrivetrain.getRobotAngularVelocity().yRotationRate);
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Collision Detection - Left", sysDrivetrain.getSensorDistanceCollision(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_LEFT));
-            telemetry.addData("Collision Detection - Right", sysDrivetrain.getSensorDistanceCollision(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_RIGHT));
-
-            // ------------------------------------------------------------
-            // - Vision telemetry
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Vision");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Camera Block Count", sysVision.getCameraObjectList().length);
-            telemetry.addData("Alliance Color", sysVision.getDetectedAllianceTagColor());
-//            telemetry.addData("R-G-B", "%4, %4, %4"
-//                    , sysVision.getAllianceTagColorLevel("red")
-//                    , sysVision.getAllianceTagColorLevel("green")
-//                    , sysVision.getAllianceTagColorLevel("blue"));
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Sensor");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Intake Count", sysIntakeArm.counterPixelCount);
-            telemetry.addData("Intake - Lower - Count", sysIntakeArm.counterIntakeLower);
-            telemetry.addData("Intake - Upper - Count", sysIntakeArm.counterIntakeUpper);
-//            telemetry.addData("Pixel Tracking Sensor Distance", sysIntakeArm.getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING));
-
-            // ------------------------------------------------------------
-            // - Intake / Arm telemetry
-            // ------------------------------------------------------------
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("-", "-- Intake / Arm");
-            telemetry.addData("-", "------------------------------");
-            telemetry.addData("Pivot Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT));
-            telemetry.addData("Slot One Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE));
-            telemetry.addData("Slot Two Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO));
-            telemetry.addData("Arm Position - Left", sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE));
-            telemetry.addData("Arm Position - Right", sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_RIGHT_SIDE));
-            telemetry.addData("Arm Limit - Lower", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER));
-            telemetry.addData("Intake Counter - Lower", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER));
-            telemetry.addData("Intake Counter - Upper", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER));
-
-            // ------------------------------------------------------------
-            // - Lighting telemetry
-            // ------------------------------------------------------------
-            if(utilRobotConstants.Configuration.ENABLE_LIGHTING) {
-                telemetry.addData("-", "------------------------------");
-                telemetry.addData("-", "-- Lighting");
-                telemetry.addData("-", "------------------------------");
-                telemetry.addData("Pattern", sysLighting.ledLightPattern.toString());
-            }
+//            // ------------------------------------------------------------
+//            // Driver Hub Feedback
+//            // ------------------------------------------------------------
+//            telemetry.addData("Run Time", runtime.toString());
+//
+//            // ------------------------------------------------------------
+//            // - Gamepad telemetry
+//            // ------------------------------------------------------------
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("-", "-- Gamepad");
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Gamepad 1 - [Y] Axial", "%4.2f", gamepad1.left_stick_y);
+//            telemetry.addData("Gamepad 1 - [X] Lateral", "%4.2f", gamepad1.left_stick_x);
+//            telemetry.addData("Gamepad 1 - [R] Rotation", "%4.2f", gamepad1.right_stick_x);
+//
+//            // ------------------------------------------------------------
+//            // - Drivetrain telemetry
+//            // ------------------------------------------------------------
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("-", "-- Drivetrain");
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Drivetrain Mode", sysDrivetrain.getLabelDrivetrainMode());
+//            telemetry.addData("Drivetrain Power", sysDrivetrain.getLabelDrivetrainOutputPower());
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Power Front left/Right", "%4.2f, %4.2f"
+//                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+//                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+//            telemetry.addData("Power Back  left/Right", "%4.2f, %4.2f"
+//                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+//                    , sysDrivetrain.getDrivetrainMotorPower(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Encoder Front left/Right", "%7d, %7d"
+//                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_FRONT)
+//                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_FRONT));
+//            telemetry.addData("Encoder Back  left/Right", "%7d, %7d"
+//                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_LEFT_BACK)
+//                    , sysDrivetrain.getDrivetrainMotorEncoderPosition(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_MOTOR_RIGHT_BACK));
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Robot Heading Raw", sysDrivetrain.getRobotHeadingRaw());
+//            telemetry.addData("Heading Adjustment", utilRobotConstants.CommonSettings.getImuTransitionAdjustment());
+//            telemetry.addData("Robot Heading (Adjusted)", sysDrivetrain.getRobotHeadingAdj());
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Robot Angle - Yaw (Z)", sysDrivetrain.getRobotAngles().getYaw(AngleUnit.DEGREES));
+//            telemetry.addData("Robot Angle - Pitch (X)", sysDrivetrain.getRobotAngles().getPitch(AngleUnit.DEGREES));
+//            telemetry.addData("Robot Angle - Yaw (Z)", sysDrivetrain.getRobotAngles().getRoll(AngleUnit.DEGREES));
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Robot Angle Velocity - Yaw (Z)", sysDrivetrain.getRobotAngularVelocity().zRotationRate);
+//            telemetry.addData("Robot Angle Velocity - Pitch (X)", sysDrivetrain.getRobotAngularVelocity().xRotationRate);
+//            telemetry.addData("Robot Angle Velocity - Yaw (Z)", sysDrivetrain.getRobotAngularVelocity().yRotationRate);
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Collision Detection - Left", sysDrivetrain.getSensorDistanceCollision(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_LEFT));
+//            telemetry.addData("Collision Detection - Right", sysDrivetrain.getSensorDistanceCollision(utilRobotConstants.Configuration.LABEL_DRIVETRAIN_SENSOR_COLLISION_RIGHT));
+//
+//            // ------------------------------------------------------------
+//            // - Vision telemetry
+//            // ------------------------------------------------------------
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("-", "-- Vision");
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Camera Block Count", sysVision.getCameraObjectList().length);
+//            telemetry.addData("Alliance Color", sysVision.getDetectedAllianceTagColor());
+////            telemetry.addData("R-G-B", "%4, %4, %4"
+////                    , sysVision.getAllianceTagColorLevel("red")
+////                    , sysVision.getAllianceTagColorLevel("green")
+////                    , sysVision.getAllianceTagColorLevel("blue"));
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("-", "-- Sensor");
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Intake Count", sysIntakeArm.counterPixelCount);
+//            telemetry.addData("Intake - Lower - Count", sysIntakeArm.counterIntakeLower);
+//            telemetry.addData("Intake - Upper - Count", sysIntakeArm.counterIntakeUpper);
+////            telemetry.addData("Pixel Tracking Sensor Distance", sysIntakeArm.getSensorDistance(utilRobotConstants.Configuration.LABEL_INTAKE_SENSOR_TRACKING));
+//
+//            // ------------------------------------------------------------
+//            // - Intake / Arm telemetry
+//            // ------------------------------------------------------------
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("-", "-- Intake / Arm");
+//            telemetry.addData("-", "------------------------------");
+//            telemetry.addData("Pivot Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT));
+//            telemetry.addData("Slot One Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE));
+//            telemetry.addData("Slot Two Position", sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_TWO));
+//            telemetry.addData("Arm Position - Left", sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE));
+//            telemetry.addData("Arm Position - Right", sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_RIGHT_SIDE));
+//            telemetry.addData("Arm Limit - Lower", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER));
+//            telemetry.addData("Intake Counter - Lower", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_LOWER));
+//            telemetry.addData("Intake Counter - Upper", sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_INTAKE_COUNT_CHECK_UPPER));
+//
+//            // ------------------------------------------------------------
+//            // - Lighting telemetry
+//            // ------------------------------------------------------------
+//            if(utilRobotConstants.Configuration.ENABLE_LIGHTING) {
+//                telemetry.addData("-", "------------------------------");
+//                telemetry.addData("-", "-- Lighting");
+//                telemetry.addData("-", "------------------------------");
+//                telemetry.addData("Pattern", sysLighting.ledLightPattern.toString());
+//            }
 
             // ------------------------------------------------------------
             // - send telemetry to driver hub

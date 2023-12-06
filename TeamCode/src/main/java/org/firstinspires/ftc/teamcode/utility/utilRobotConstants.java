@@ -359,6 +359,7 @@ public class utilRobotConstants {
         // Servo Settings - Pivot
         public static final double SERVO_PIVOT_SETPOINT_HOME = 0.50;
         public static final double SERVO_PIVOT_SETPOINT_BOARD = 1;
+        public static final double SERVO_PIVOT_SETPOINT_AUTOPIXEL = 0.90;
 
         // Servo Settings - Pixel Slot
         public static final double SERVO_SLOTONE_SETPOINT_INIT = 0.40;
@@ -371,8 +372,8 @@ public class utilRobotConstants {
 
         // Servo Settings - Endgame - Drone
         public static final double SERVO_DRONE_LAUNCH_SETPOINT_INIT = 0.50;
-        public static final double SERVO_DRONE_LAUNCH_SETPOINT_OPEN = 0.20;
-        public static final double SERVO_DRONE_LAUNCH_SETPOINT_CLOSE = 0.60;
+        public static final double SERVO_DRONE_LAUNCH_SETPOINT_OPEN = 0;
+        public static final double SERVO_DRONE_LAUNCH_SETPOINT_CLOSE = 0.50;
 
         public static final double SERVO_DRONE_PIVOT_SETPOINT_INIT = 0.50;
         public static final double SERVO_DRONE_PIVOT_SETPOINT_LAUNCH = 0.25;
@@ -385,7 +386,8 @@ public class utilRobotConstants {
         public static final int ARM_ENCODER_SETPOINT_HOME = 0;
         public static final int ARM_ENCODER_SETPOINT_MAX = 4300; // was 8200 (replaced motor)
         public static final int ARM_ENCODER_SETPOINT_CRUISE = 800;
-        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 2600; // was 5000 (replaced motor)
+        public static final int ARM_ENCODER_SETPOINT_AUTOPIXEL = 2300;
+        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 3100; // was 5000 (replaced motor) // was 2600
         public static final int ARM_ENCODER_SETPOINT_HANG = 680; // was 1300 (replaced motor)
 
         public static final int ARM_ENCODER_LIMIT_CHECK_INTAKE = 50;
