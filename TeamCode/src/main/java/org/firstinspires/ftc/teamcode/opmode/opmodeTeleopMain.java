@@ -305,7 +305,7 @@ public class opmodeTeleopMain extends LinearOpMode {
             }
 
             // Arm - Manual Control
-            if(Math.abs(gamepad2.right_stick_y) >= .25) {
+            if(Math.abs(gamepad2.right_stick_y) >= 0.25) {
                 isManualSlideMode = true;
                 if(sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) >= 0 && sysIntakeArm.getArmCurrentPosition(utilRobotConstants.Configuration.LABEL_ARM_MOTOR_LEFT_SIDE) <= utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_MAX) {
                     if(sysIntakeArm.getLimitSensorTripped(utilRobotConstants.Configuration.LABEL_ARM_SENSOR_LIMIT_LOWER)) {
@@ -363,9 +363,23 @@ public class opmodeTeleopMain extends LinearOpMode {
                 }
 
             }
+            if(gamepad2.left_stick_y >= 0.5) {
+
+                if(sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) <= utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD) {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) + 0.05);
+                }
+
+            }
 
             // Manual Control of pixel sleeve - to home
             if(gamepad2.dpad_down) {
+
+                if(sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) >= utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME) {
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) - 0.05);
+                }
+
+            }
+            if(gamepad2.left_stick_y <= -0.5) {
 
                 if(sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) >= utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME) {
                     sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, sysIntakeArm.getIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT) - 0.05);
@@ -393,7 +407,7 @@ public class opmodeTeleopMain extends LinearOpMode {
                 sysDrivetrain.resetZeroRobotHeading();
 
                 // Cycle Pause
-                sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+//                sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
             }
 
             // ------------------------------------------------------------
@@ -403,7 +417,7 @@ public class opmodeTeleopMain extends LinearOpMode {
                 sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_ALERT_ENDGAME);
             }
 
-            if (gamepad1.back && gamepad2.back) {
+            if (gamepad1.start && gamepad2.start) {
                 double currentRuntime = getRuntime();
 
 //                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_LAUNCH);
@@ -411,7 +425,7 @@ public class opmodeTeleopMain extends LinearOpMode {
                 sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_LAUNCH_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_LAUNCH_SETPOINT_OPEN);
             }
 
-            if (gamepad1.start && gamepad2.start) {
+            if (gamepad1.back && gamepad2.back) {
                 double currentRuntime = getRuntime();
 
 //                sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_DRONE_PIVOT_SERVO_MAIN, utilRobotConstants.IntakeArm.SERVO_DRONE_PIVOT_SETPOINT_INIT);
@@ -422,7 +436,7 @@ public class opmodeTeleopMain extends LinearOpMode {
 //            // ------------------------------------------------------------
 //            // Driver Hub Feedback
 //            // ------------------------------------------------------------
-//            telemetry.addData("Run Time", runtime.toString());
+            telemetry.addData("Run Time", runtime.toString());
 //
 //            // ------------------------------------------------------------
 //            // - Gamepad telemetry
@@ -520,6 +534,19 @@ public class opmodeTeleopMain extends LinearOpMode {
             // ------------------------------------------------------------
             // - send telemetry to driver hub
             // ------------------------------------------------------------
+            telemetry.addData("-", "------------------------------");
+            telemetry.addData("-", "(reset robot)");
+            telemetry.addData("-", "-- If you see an I2C error");
+            telemetry.addData("-", "");
+            telemetry.addData("-", "(change battery)");
+            telemetry.addData("-", "-- if expansion hub loses connection");
+            telemetry.addData("-", "-- if voltage below 12v");
+            telemetry.addData("-", "");
+            telemetry.addData("-", "Take your time!");
+            telemetry.addData("-", "");
+            telemetry.addData("-", "Drive with care and caution");
+            telemetry.addData("-", "");
+            telemetry.addData("-", "Don't drive like you stole it");
             telemetry.update();
 
 //            // Input assignment to 'pause' telemetry update(s)
@@ -527,7 +554,7 @@ public class opmodeTeleopMain extends LinearOpMode {
 //            }
 
             // Pace this loop so commands move at a reasonable speed.
-            sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
+//            sleep(utilRobotConstants.CommonSettings.SLEEP_TIMER_MILLISECONDS_DEFAULT);
         }
 
         // ------------------------------------------------------------

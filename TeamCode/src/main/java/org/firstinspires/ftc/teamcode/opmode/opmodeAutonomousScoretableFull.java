@@ -130,55 +130,30 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
 
                     if (targetObject.x < utilRobotConstants.Vision.RANDOM_TARGET_ZONE_ONE_X) {
 
-                        // Set Zone based on Alliance
-                        if(sysVision.getDetectedAllianceTagColor() == "blue") {
-                            targetZone = 1; // left
-                            sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
-                        }
-                        else {
-                            targetZone = 3; // left
-                            sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
-                        }
+                        targetZone = 1; // left
+                        sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
+
                     } else if (targetObject.x > utilRobotConstants.Vision.RANDOM_TARGET_ZONE_ONE_X && targetObject.x < utilRobotConstants.Vision.RANDOM_TARGET_ZONE_TWO_X) {
                         targetZone = 2; // center
                         sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_TWO);
+
                     } else if (targetObject.x > utilRobotConstants.Vision.RANDOM_TARGET_ZONE_TWO_X) {
 
-                        // Set Zone based on Alliance
-                        if(sysVision.getDetectedAllianceTagColor() == "blue") {
-                            targetZone = 3; // right
-                            sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
-                        }
-                        else {
-                            targetZone = 1; // right
-                            sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
-                        }
+                        targetZone = 3; // right
+                        sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
+
                     } else {
 
-                        // Set Zone based on Alliance
-                        if(sysVision.getDetectedAllianceTagColor() == "blue") {
-                            targetZone = 3;
-                            sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
-                        }
-                        else {
-                            targetZone = 1;
-                            sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
-                        }
-                    }
+                        targetZone = 3;
+                        sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
 
+                    }
                 }
             }
             else {
 
-                // Set Zone based on Alliance
-                if(sysVision.getDetectedAllianceTagColor() == "blue") {
-                    targetZone = 3;
-                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
-                }
-                else {
-                    targetZone = 1;
-                    sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
-                }
+                targetZone = 3;
+                sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
             }
 
             // ------------------------------------------------------------
@@ -214,17 +189,16 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
             telemetry.update();
         }
 
-
         // Set Trajectory Sequence based on Alliance
         if(sysVision.getDetectedAllianceTagColor() == "blue") {
 
             // Set Starting Pose for Blue Station Two
-            startPose = new Pose2d(-64, 33, Math.toRadians(0));
+            startPose = new Pose2d(-64, 9, Math.toRadians(0));
         }
         else {
 
             // Set Starting Pose for Red Station Two
-            startPose = new Pose2d(64, 33, Math.toRadians(180));
+            startPose = new Pose2d(64, 9, Math.toRadians(180));
         }
 
         sysDrivetrain.setPoseEstimate(startPose);
@@ -247,7 +221,7 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
         // ----------------------------------------------------
         TrajectorySequence trajSeqBlueAudienceZoneOne = sysDrivetrain.trajectorySequenceBuilder(startPose)
                 // Move to Random Zone One
-                .lineToSplineHeading(new Pose2d(-36, 31, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-36, 30, Math.toRadians(270)))
 
                 // Place Purple Pixel
                 .addTemporalMarker(() -> {
@@ -255,29 +229,32 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 })
                 .waitSeconds(2)
 
+                // Back from zone
+                .lineTo(new Vector2d(-36,38))
+
                 // Move to Cycle Lane
-                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(85)))
 
                 // Move Across Field - to other side
-//                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
+//                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(85)))
 
                 // TODO: Check proper position
                 // Move to board - Position One
-                .lineToSplineHeading(new Pose2d(-36, 48, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-40, 42, Math.toRadians(90)))
 
                 // Action - Raise Arm
                 .addTemporalMarker(() -> {
 
                     // Raise Arm
-                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                 })
                 .waitSeconds(2)
 
                 // Move a little closer to board
                 .splineTo(
-                        new Vector2d(-36, 52), Math.toRadians(90),
+                        new Vector2d(-40, 46), Math.toRadians(90),
                         sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
@@ -295,11 +272,14 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 })
                 .waitSeconds(2)
 
+                // Back Away from the board
+                .lineTo(new Vector2d(-40, 42))
+
                 // Drive to park location
-                .lineToSplineHeading(new Pose2d(-60, 48, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
 
                 // Move a little closer to park position
-                .strafeTo(new Vector2d(-60, 54))
+                .strafeTo(new Vector2d(-64, 54))
 
                 .build();
 
@@ -308,7 +288,7 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
         // ----------------------------------------------------
         TrajectorySequence trajSeqBlueAudienceZoneTwo = sysDrivetrain.trajectorySequenceBuilder(startPose)
                 // Move to Random Zone Two
-                .lineToSplineHeading(new Pose2d(-14, 33, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(-26, 20, Math.toRadians(270)))
 
                 // Place Purple Pixel
                 .addTemporalMarker(() -> {
@@ -317,31 +297,31 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 .waitSeconds(2)
 
                 // Move away from Random Zone Two
-                .lineTo(new Vector2d(-10, 33))
+                .lineTo(new Vector2d(-26, 38))
 
                 // Move to Cycle Lane
-                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
 
                 // Move Across Field - to other side
 //                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
 
                 // TODO: Set proper position
                 // Move to board - Position Two
-                .lineToSplineHeading(new Pose2d(-33, 48, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-38, 42, Math.toRadians(90)))
 
                 // Action - Raise Arm
                 .addTemporalMarker(() -> {
 
                     // Raise Arm
-                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                 })
                 .waitSeconds(2)
 
                 // Move a little closer to board
                 .splineTo(
-                        new Vector2d(-33, 52), Math.toRadians(90),
+                        new Vector2d(-38, 46), Math.toRadians(90),
                         sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
@@ -359,11 +339,14 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 })
                 .waitSeconds(2)
 
+                // Back Away from the board
+                .lineTo(new Vector2d(-38, 42))
+
                 // Drive to park location
-                .lineToSplineHeading(new Pose2d(-60, 48, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
 
                 // Move a little closer to park position
-                .strafeTo(new Vector2d(-60, 54))
+                .strafeTo(new Vector2d(-64, 54))
 
                 .build();
 
@@ -372,7 +355,7 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
         // ----------------------------------------------------
         TrajectorySequence trajSeqBlueAudienceZoneThree = sysDrivetrain.trajectorySequenceBuilder(startPose)
                 // Move to Random Zone Three
-                .lineToSplineHeading(new Pose2d(-36, 54, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-36, 6, Math.toRadians(270)))
 
                 // Place Purple Pixel
                 .addTemporalMarker(() -> {
@@ -381,31 +364,31 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 .waitSeconds(2)
 
                 // Move away from Random Zone Three
-                .lineTo(new Vector2d(-14, 54))
+                .lineTo(new Vector2d(-36, 38))
 
                 // Move to Cycle Lane
-                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
 
                 // Move Across Field - to other side
 //                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
 
                 // TODO: Set proper position
                 // Move to board - Position Three
-                .lineToSplineHeading(new Pose2d(-30, 48, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(-34, 42, Math.toRadians(90)))
 
                 // Action - Raise Arm
                 .addTemporalMarker(() -> {
 
                     // Raise Arm
-                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                 })
                 .waitSeconds(2)
 
                 // Move a little closer to board
                 .splineTo(
-                        new Vector2d(-30, 52), Math.toRadians(90),
+                        new Vector2d(-34, 46), Math.toRadians(90),
                         sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
@@ -423,11 +406,14 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 })
                 .waitSeconds(2)
 
+                // Back Away from the board
+                .lineTo(new Vector2d(-34, 42))
+
                 // Drive to park location
-                .lineToSplineHeading(new Pose2d(-60, 48, Math.toRadians(0)))
+                .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
 
                 // Move a little closer to park position
-                .strafeTo(new Vector2d(-60, 54))
+                .strafeTo(new Vector2d(-64, 54))
 
                 .build();
 
@@ -443,7 +429,7 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
         // ----------------------------------------------------
         TrajectorySequence trajSeqRedAudienceZoneThree = sysDrivetrain.trajectorySequenceBuilder(startPose)
                 // Move to Random Zone One
-                .lineToSplineHeading(new Pose2d(36, 31, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(36, 30, Math.toRadians(270)))
 
                 // Place Purple Pixel
                 .addTemporalMarker(() -> {
@@ -452,28 +438,28 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 .waitSeconds(2)
 
                 // Move to Cycle Lane
-                .lineToSplineHeading(new Pose2d(14, 39, Math.toRadians(87)))
+//                .lineToSplineHeading(new Pose2d(14, 39, Math.toRadians(87)))
 
                 // Move Across Field - to other side
 //                .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(90)))
 
                 // TODO: Set proper position
                 // Move to board - Position Three
-                .lineToSplineHeading(new Pose2d(30, 48, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(40, 42, Math.toRadians(90)))
 
                 // Action - Raise Arm
                 .addTemporalMarker(() -> {
 
                     // Raise Arm
-                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                 })
                 .waitSeconds(2)
 
                 // Move a little closer to board
                 .splineTo(
-                        new Vector2d(30, 52), Math.toRadians(90),
+                        new Vector2d(40, 46), Math.toRadians(90),
                         sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
@@ -491,11 +477,14 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 })
                 .waitSeconds(2)
 
+                // Back Away from the board
+                .lineTo(new Vector2d(40, 42))
+
                 // Drive to park location
-                .lineToSplineHeading(new Pose2d(60, 48, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
 
                 // Move a little closer to park position
-                .strafeTo(new Vector2d(60, 54))
+                .strafeTo(new Vector2d(64, 54))
 
                 .build();
 
@@ -504,7 +493,7 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
         // ----------------------------------------------------
         TrajectorySequence trajSeqRedAudienceZoneTwo = sysDrivetrain.trajectorySequenceBuilder(startPose)
                 // Move to Random Zone Two
-                .lineToSplineHeading(new Pose2d(-14, 33, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(26, 20, Math.toRadians(270)))
 
                 // Place Purple Pixel
                 .addTemporalMarker(() -> {
@@ -513,31 +502,31 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 .waitSeconds(2)
 
                 // Move away from Random Zone Two
-                .lineTo(new Vector2d(-10, -33))
+                .lineTo(new Vector2d(26, 38))
 
                 // Move to Cycle Lane
-                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
 
                 // Move Across Field - to other side
 //                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
 
                 // TODO: Set proper position
                 // Move to board - Position Two
-                .lineToSplineHeading(new Pose2d(-33, 48, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(38, 42, Math.toRadians(90)))
 
                 // Action - Raise Arm
                 .addTemporalMarker(() -> {
 
                     // Raise Arm
-                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                 })
                 .waitSeconds(2)
 
                 // Move a little closer to board
                 .splineTo(
-                        new Vector2d(-33, 52), Math.toRadians(90),
+                        new Vector2d(38, 46), Math.toRadians(90),
                         sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
@@ -555,11 +544,14 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 })
                 .waitSeconds(2)
 
+                // Back Away from the board
+                .lineTo(new Vector2d(38, 42))
+
                 // Drive to park location
-                .lineToSplineHeading(new Pose2d(60, 48, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
 
                 // Move a little closer to park position
-                .strafeTo(new Vector2d(60, 54))
+                .strafeTo(new Vector2d(64, 54))
 
                 .build();
 
@@ -568,7 +560,7 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
         // ----------------------------------------------------
         TrajectorySequence trajSeqRedAudienceZoneOne = sysDrivetrain.trajectorySequenceBuilder(startPose)
                 // Move to Random Zone Three
-                .lineToSplineHeading(new Pose2d(36, 54, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(36, 6, Math.toRadians(270)))
 
                 // Place Purple Pixel
                 .addTemporalMarker(() -> {
@@ -577,31 +569,31 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 .waitSeconds(2)
 
                 // Move away from Random Zone Three
-                .lineTo(new Vector2d(14, 54))
+                .lineTo(new Vector2d(36, 38))
 
                 // Move to Cycle Lane
-                .lineToSplineHeading(new Pose2d(14, 39, Math.toRadians(87)))
+//                .lineToSplineHeading(new Pose2d(14, 39, Math.toRadians(87)))
 
                 // Move Across Field - to other side
 //                .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(90)))
 
                 // TODO: Set proper position
                 // Move to board - Position One
-                .lineToSplineHeading(new Pose2d(36, 48, Math.toRadians(90)))
+                .lineToSplineHeading(new Pose2d(34, 42, Math.toRadians(90)))
 
                 // Action - Raise Arm
                 .addTemporalMarker(() -> {
 
                     // Raise Arm
-                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_BOARD);
-                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_PRECLIMB, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                    sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
+                    sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                 })
                 .waitSeconds(2)
 
                 // Move a little closer to board
                 .splineTo(
-                        new Vector2d(36, 52), Math.toRadians(90),
+                        new Vector2d(34, 46), Math.toRadians(90),
                         sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                 )
@@ -619,11 +611,14 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                 })
                 .waitSeconds(2)
 
+                // Back Away from the board
+                .lineTo(new Vector2d(34, 42))
+
                 // Drive to park location
-                .lineToSplineHeading(new Pose2d(60, 48, Math.toRadians(180)))
+                .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
 
                 // Move a little closer to park position
-                .strafeTo(new Vector2d(60, 54))
+                .strafeTo(new Vector2d(64, 54))
 
                 .build();
 
