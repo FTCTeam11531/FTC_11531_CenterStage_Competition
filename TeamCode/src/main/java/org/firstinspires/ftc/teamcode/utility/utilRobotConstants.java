@@ -176,6 +176,11 @@ public class utilRobotConstants {
      */
     public static final class Drivetrain {
 
+        public static final class Autonomous {
+            public static final double MOTOR_MAX_VELOCITY_FINETUNE = 15;
+            public static final double MOTOR_MAX_VELOCITY_CROSSFIELD = 28;
+        }
+
         // Hardware Settings based on the following [comments]:
         public static final String COMMENT_DRIVE_MOTOR = "goBuilda Yellow Jacket 5203-2402-0019";
         public static final String COMMENT_DRIVE_WHEEL_TYPE = "Mecanum";
@@ -244,7 +249,7 @@ public class utilRobotConstants {
         public static final double MOTOR_OUTPUT_POWER_MAX = 1;
 
         public static final double MOTOR_OUTPUT_POWER_HIGH = 1;
-        public static final double MOTOR_OUTPUT_POWER_MED = 0.85; // normal run-mode
+        public static final double MOTOR_OUTPUT_POWER_MED = 0.75; // normal run-mode
         public static final double MOTOR_OUTPUT_POWER_LOW = 0.40; // lowered 11.27 - from .50 to .40
         public static final double MOTOR_OUTPUT_POWER_SNAIL = 0.25;
 
@@ -358,8 +363,12 @@ public class utilRobotConstants {
 
         // Servo Settings - Pivot
         public static final double SERVO_PIVOT_SETPOINT_HOME = 0.50;
-        public static final double SERVO_PIVOT_SETPOINT_BOARD = 1;
-        public static final double SERVO_PIVOT_SETPOINT_AUTOPIXEL = 0.75;
+        public static final double SERVO_PIVOT_SETPOINT_BOARD = 0.75;
+//        public static final double SERVO_PIVOT_SETPOINT_AUTOPIXEL = 0.70;
+//        public static final double SERVO_PIVOT_SETPOINT_AUTOPIXEL_INSIDE = 0.75;
+        public static final double SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1 = 0.70;
+        public static final double SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL2 = 0.75;
+        public static final double SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL3 = 0.75;
 
         // Servo Settings - Pixel Slot
         public static final double SERVO_SLOTONE_SETPOINT_INIT = 0.40;
@@ -386,8 +395,11 @@ public class utilRobotConstants {
         public static final int ARM_ENCODER_SETPOINT_HOME = 0;
         public static final int ARM_ENCODER_SETPOINT_MAX = 4300; // was 8200 (replaced motor)
         public static final int ARM_ENCODER_SETPOINT_CRUISE = 800;
-        public static final int ARM_ENCODER_SETPOINT_AUTOPIXEL = 2000;
-        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 3100; // was 5000 (replaced motor) // was 2600
+        public static final int ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1 = 1850; // was 2050
+        public static final int ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL2 = 2050; // was 2050
+        public static final int ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL3 = 2250; // was 2050
+        public static final int ARM_ENCODER_SETPOINT_LOW = 1950; // was 2050
+        public static final int ARM_ENCODER_SETPOINT_PRECLIMB = 2900; // was 5000 (replaced motor) // was 2600 // added 300 for drone launcher
         public static final int ARM_ENCODER_SETPOINT_HANG = 680; // was 1300 (replaced motor)
 
         public static final int ARM_ENCODER_LIMIT_CHECK_INTAKE = 50;

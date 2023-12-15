@@ -147,6 +147,13 @@ public class sysIntakeArm {
         setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
     }
 
+    public void deactivateSweeper() {
+
+        // Stop Sweepers
+        setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_LEFT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
+        setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SWEEPER_RIGHT, utilRobotConstants.IntakeArm.SERVO_INTAKE_SWEEPER_SETPOINT_INIT);
+    }
+
     public void reverseIntake() {
 
         // Power Intake Motors - Reverse
@@ -185,11 +192,11 @@ public class sysIntakeArm {
 
     }
 
-    public void resetPixelTracking() {
+    public void resetPixelTracking(int inPixelCount) {
 
-        counterPixelCount = 0;
-        counterIntakeLower = 0;
-        counterIntakeUpper = 0;
+        counterPixelCount = inPixelCount;
+        counterIntakeLower = inPixelCount;
+        counterIntakeUpper = inPixelCount;
     }
 
     public void resetArmEncoder() {
@@ -398,4 +405,5 @@ public class sysIntakeArm {
         }
 
     }
+
 }

@@ -5,7 +5,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -22,13 +21,13 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.utilRobotConstants;
 
 @Config
-@Autonomous(name = "Autonomous - Audience - Full", group = "_auto", preselectTeleOp = "Teleop Main")
+@Autonomous(name = "Auto - Scoretable - Test", group = "_auto", preselectTeleOp = "Teleop Main")
 @Disabled
-public class opmodeAutonomousAudienceFull extends LinearOpMode {
+public class opmodeAutonomousScoretableTest extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
     // ------------------------------------------------------------
-    // -- Robot Initializtion
+    // -- Robot Initialization
 
     // -- Lighting System
     sysLighting sysLighting = new sysLighting(this);
@@ -131,7 +130,6 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                 if(targetObject != null) {
 
                     if (targetObject.x < utilRobotConstants.Vision.RANDOM_TARGET_ZONE_ONE_X) {
-
                         targetZone = 1; // left
                         sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_ONE);
 
@@ -153,7 +151,6 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
             else {
                 targetZone = 3;
                 sysLighting.setLightPattern(utilRobotConstants.Lighting.LIGHT_PATTERN_AUTONOMOUS_ZONE_ID_THREE);
-
             }
 
 //            // ------------------------------------------------------------
@@ -191,16 +188,15 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
 
         if(opModeIsActive()) {
 
-
             // Set Trajectory Sequence based on Alliance
             if (sysVision.getDetectedAllianceTagColor() == "blue") {
 
-                // Set Starting Pose for Blue Station - Audience Side
-                startPose = new Pose2d(-64, -33, Math.toRadians(0));
+                // Set Starting Pose for Blue Station Two
+                startPose = new Pose2d(-64, 9, Math.toRadians(0));
             } else {
 
-                // Set Starting Pose for Red Station - Audience Side
-                startPose = new Pose2d(64, -33, Math.toRadians(180));
+                // Set Starting Pose for Red Station Two
+                startPose = new Pose2d(64, 9, Math.toRadians(180));
             }
 
             sysDrivetrain.setPoseEstimate(startPose);
@@ -219,11 +215,11 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
             // ----------------------------------------------------
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Blue Alliance - Audience Side - Zone One
+            // Trajectory Sequence for - Blue Alliance - Scoretable Side - Zone One
             // ----------------------------------------------------
             TrajectorySequence trajSeqBlueAudienceZoneOne = sysDrivetrain.trajectorySequenceBuilder(startPose)
                     // Move to Random Zone One
-                    .lineToSplineHeading(new Pose2d(-36, -31, Math.toRadians(90)))
+                    .lineToSplineHeading(new Pose2d(-36, 30, Math.toRadians(270)))
 
                     // Place Purple Pixel
                     .addTemporalMarker(() -> {
@@ -231,32 +227,32 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
-                    // Back from truse
-                    .lineTo(new Vector2d(-36, -39))
+                    // Back from zone
+                    .lineTo(new Vector2d(-36, 38))
 
                     // Move to Cycle Lane
-                    .lineToSplineHeading(new Pose2d(-14, -39, Math.toRadians(85)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(85)))
 
                     // Move Across Field - to other side
-                    .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(85)))
+//                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(85)))
 
                     // TODO: Check proper position
                     // Move to board - Position One
-                    .strafeTo(new Vector2d(-38, 48))
+                    .lineToSplineHeading(new Pose2d(-40, 42, Math.toRadians(90)))
 
                     // Action - Raise Arm
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL2);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL2, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
 
                     // Move a little closer to board
                     .splineTo(
-                            new Vector2d(-38, 56), Math.toRadians(90),
+                            new Vector2d(-40, 46), Math.toRadians(90),
                             sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                     )
@@ -268,7 +264,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Back Away from the board
-                    .lineTo(new Vector2d(-38, 48))
+                    .lineTo(new Vector2d(-40, 42))
 
                     // Lower Arm
                     .addTemporalMarker(() -> {
@@ -278,20 +274,19 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Drive to park location
-                    .lineToSplineHeading(new Pose2d(-8, 48, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
 
                     // Move a little closer to park position
-                    .strafeTo(new Vector2d(-8, 60))
+                    .strafeTo(new Vector2d(-64, 54))
 
                     .build();
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Blue Alliance - Audience Side - Zone Two
+            // Trajectory Sequence for - Blue Alliance - Scoretable Side - Zone Two
             // ----------------------------------------------------
             TrajectorySequence trajSeqBlueAudienceZoneTwo = sysDrivetrain.trajectorySequenceBuilder(startPose)
                     // Move to Random Zone Two
-                    .lineToSplineHeading(new Pose2d(-36, -50, Math.toRadians(90)))
-                    .strafeTo(new Vector2d(-27, -48))
+                    .lineToSplineHeading(new Pose2d(-26, 20, Math.toRadians(270)))
 
                     // Place Purple Pixel
                     .addTemporalMarker(() -> {
@@ -300,31 +295,31 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Move away from Random Zone Two
-                    .lineTo(new Vector2d(-14, -54))
+                    .lineTo(new Vector2d(-26, 38))
 
                     // Move to Cycle Lane
-                    .lineToSplineHeading(new Pose2d(-14, -39, Math.toRadians(80)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
 
                     // Move Across Field - to other side
-                    .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(80)))
+//                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
 
                     // TODO: Set proper position
                     // Move to board - Position Two
-                    .strafeTo(new Vector2d(-30, 48))
+                    .lineToSplineHeading(new Pose2d(-38, 42, Math.toRadians(90)))
 
                     // Action - Raise Arm
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL2);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL2, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
 
                     // Move a little closer to board
                     .splineTo(
-                            new Vector2d(-30, 56), Math.toRadians(90),
+                            new Vector2d(-38, 46), Math.toRadians(90),
                             sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                     )
@@ -336,7 +331,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Back Away from the board
-                    .lineTo(new Vector2d(-30, 48))
+                    .lineTo(new Vector2d(-38, 42))
 
                     // Lower Arm
                     .addTemporalMarker(() -> {
@@ -346,19 +341,19 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Drive to park location
-                    .lineToSplineHeading(new Pose2d(-8, 48, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
 
                     // Move a little closer to park position
-                    .strafeTo(new Vector2d(-8, 60))
+                    .strafeTo(new Vector2d(-64, 54))
 
                     .build();
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Blue Alliance - Audience Side - Zone Three
+            // Trajectory Sequence for - Blue Alliance - Scoretable Side - Zone Three
             // ----------------------------------------------------
             TrajectorySequence trajSeqBlueAudienceZoneThree = sysDrivetrain.trajectorySequenceBuilder(startPose)
                     // Move to Random Zone Three
-                    .lineToSplineHeading(new Pose2d(-36, -54, Math.toRadians(90)))
+                    .lineToSplineHeading(new Pose2d(-36, 6, Math.toRadians(270)))
 
                     // Place Purple Pixel
                     .addTemporalMarker(() -> {
@@ -367,31 +362,31 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Move away from Random Zone Three
-                    .lineTo(new Vector2d(-14, -54))
+                    .lineTo(new Vector2d(-36, 38))
 
                     // Move to Cycle Lane
-                    .lineToSplineHeading(new Pose2d(-14, -39, Math.toRadians(83)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
 
                     // Move Across Field - to other side
-                    .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(83)))
+//                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
 
                     // TODO: Set proper position
                     // Move to board - Position Three
-                    .strafeTo(new Vector2d(-26, 48))
+                    .lineToSplineHeading(new Pose2d(-34, 42, Math.toRadians(90)))
 
                     // Action - Raise Arm
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL2);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL2, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
 
                     // Move a little closer to board
                     .splineTo(
-                            new Vector2d(-26, 56), Math.toRadians(90),
+                            new Vector2d(-34, 46), Math.toRadians(90),
                             sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                     )
@@ -403,7 +398,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Back Away from the board
-                    .lineTo(new Vector2d(-26, 48))
+                    .lineTo(new Vector2d(-34, 42))
 
                     // Lower Arm
                     .addTemporalMarker(() -> {
@@ -413,56 +408,56 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Drive to park location
-                    .lineToSplineHeading(new Pose2d(-8, 48, Math.toRadians(0)))
+                    .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
 
                     // Move a little closer to park position
-                    .strafeTo(new Vector2d(-8, 60))
+                    .strafeTo(new Vector2d(-64, 54))
 
                     .build();
 
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Blue Alliance - Audience Side - Default (when detection goes wrong)
+            // Trajectory Sequence for - Blue Alliance - Scoretable Side - Default (when detection goes wrong)
             // ----------------------------------------------------
             TrajectorySequence trajSeqBlueAudienceZoneDefault = trajSeqBlueAudienceZoneThree;
 
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Red Alliance - Audience Side - Zone Three
+            // Trajectory Sequence for - Red Alliance - Scoretable Side - Zone Three
             // ----------------------------------------------------
             TrajectorySequence trajSeqRedAudienceZoneThree = sysDrivetrain.trajectorySequenceBuilder(startPose)
                     // Move to Random Zone One
-                    .lineToSplineHeading(new Pose2d(36, -31, Math.toRadians(90)))
+                    .lineToSplineHeading(new Pose2d(36, 30, Math.toRadians(270)))
 
                     // Place Purple Pixel
-                    .addTemporalMarker(() -> {
+                    .addDisplacementMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
                     })
-                    .waitSeconds(2)
+                    .waitSeconds(1)
 
                     // Move to Cycle Lane
-                    .lineToSplineHeading(new Pose2d(14, -39, Math.toRadians(98)))
+//                .lineToSplineHeading(new Pose2d(14, 39, Math.toRadians(87)))
 
                     // Move Across Field - to other side
-                    .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(98)))
+//                .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(90)))
 
                     // TODO: Set proper position
                     // Move to board - Position Three
-                    .strafeTo(new Vector2d(33, 48))
+                    .lineToSplineHeading(new Pose2d(40, 42, Math.toRadians(90)))
 
                     // Action - Raise Arm
-                    .addTemporalMarker(() -> {
+                    .addDisplacementMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL2);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL2, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
 
                     // Move a little closer to board
                     .splineTo(
-                            new Vector2d(33, 56), Math.toRadians(90),
+                            new Vector2d(40, 46), Math.toRadians(90),
                             sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                     )
@@ -474,7 +469,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Back Away from the board
-                    .lineTo(new Vector2d(33, 48))
+                    .lineTo(new Vector2d(40, 42))
 
                     // Lower Arm
                     .addTemporalMarker(() -> {
@@ -483,21 +478,25 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
-                    // Drive to park location
-                    .lineToSplineHeading(new Pose2d(8, 48, Math.toRadians(180)))
 
-                    // Move a little closer to park position
-                    .strafeTo(new Vector2d(8, 60))
+                    // Move to Cycle Lane
+                    .strafeTo(new Vector2d(64, 42))
+
+
+//                    // Drive to park location
+//                    .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
+//
+//                    // Move a little closer to park position
+//                    .strafeTo(new Vector2d(64, 54))
 
                     .build();
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Red Alliance - Audience Side - Zone Two
+            // Trajectory Sequence for - Red Alliance - Scoretable Side - Zone Two
             // ----------------------------------------------------
             TrajectorySequence trajSeqRedAudienceZoneTwo = sysDrivetrain.trajectorySequenceBuilder(startPose)
                     // Move to Random Zone Two
-                    .lineToSplineHeading(new Pose2d(34, -50, Math.toRadians(90)))
-                    .strafeTo(new Vector2d(26, -46))
+                    .lineToSplineHeading(new Pose2d(26, 20, Math.toRadians(270)))
 
                     // Place Purple Pixel
                     .addTemporalMarker(() -> {
@@ -506,31 +505,31 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Move away from Random Zone Two
-                    .lineTo(new Vector2d(14, -54))
+                    .lineTo(new Vector2d(26, 38))
 
                     // Move to Cycle Lane
-                    .lineToSplineHeading(new Pose2d(14, -39, Math.toRadians(98)))
+//                .lineToSplineHeading(new Pose2d(-14, 39, Math.toRadians(87)))
 
                     // Move Across Field - to other side
-                    .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(98)))
+//                .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(90)))
 
                     // TODO: Set proper position
                     // Move to board - Position Two
-                    .strafeTo(new Vector2d(28, 48))
+                    .lineToSplineHeading(new Pose2d(38, 42, Math.toRadians(90)))
 
                     // Action - Raise Arm
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL2);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL2, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
 
                     // Move a little closer to board
                     .splineTo(
-                            new Vector2d(28, 56), Math.toRadians(90),
+                            new Vector2d(38, 46), Math.toRadians(90),
                             sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                     )
@@ -542,7 +541,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Back Away from the board
-                    .lineTo(new Vector2d(28, 48))
+                    .lineTo(new Vector2d(38, 42))
 
                     // Lower Arm
                     .addTemporalMarker(() -> {
@@ -552,19 +551,19 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Drive to park location
-                    .lineToSplineHeading(new Pose2d(6, 48, Math.toRadians(180)))
+                    .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
 
                     // Move a little closer to park position
-                    .strafeTo(new Vector2d(6, 60))
+                    .strafeTo(new Vector2d(64, 54))
 
                     .build();
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Red Alliance - Audience Side - Zone One
+            // Trajectory Sequence for - Red Alliance - Scoretable Side - Zone One
             // ----------------------------------------------------
             TrajectorySequence trajSeqRedAudienceZoneOne = sysDrivetrain.trajectorySequenceBuilder(startPose)
                     // Move to Random Zone Three
-                    .lineToSplineHeading(new Pose2d(36, -54, Math.toRadians(90)))
+                    .lineToSplineHeading(new Pose2d(36, 6, Math.toRadians(270)))
 
                     // Place Purple Pixel
                     .addTemporalMarker(() -> {
@@ -573,30 +572,31 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Move away from Random Zone Three
-                    .lineTo(new Vector2d(14, -54))
+                    .lineTo(new Vector2d(36, 38))
 
                     // Move to Cycle Lane
-                    .lineToSplineHeading(new Pose2d(14, -39, Math.toRadians(98)))
+//                .lineToSplineHeading(new Pose2d(14, 39, Math.toRadians(87)))
 
                     // Move Across Field - to other side
-                    .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(98)))
+//                .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(90)))
 
                     // TODO: Set proper position
                     // Move to board - Position One
-                    .strafeTo(new Vector2d(26, 48))
+                    .lineToSplineHeading(new Pose2d(34, 42, Math.toRadians(90)))
 
                     // Action - Raise Arm
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL2);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL2, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
 
                     // Move a little closer to board
-                    .lineTo(new Vector2d(26, 56),
+                    .splineTo(
+                            new Vector2d(34, 46), Math.toRadians(90),
                             sysDrivetrain.getVelocityConstraint(15, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                             sysDrivetrain.getAccelerationConstraint(DriveConstants.MAX_ACCEL)
                     )
@@ -608,7 +608,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Back Away from the board
-                    .lineTo(new Vector2d(26, 48))
+                    .lineTo(new Vector2d(34, 42))
 
                     // Lower Arm
                     .addTemporalMarker(() -> {
@@ -618,18 +618,18 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     .waitSeconds(2)
 
                     // Drive to park location
-                    .lineToSplineHeading(new Pose2d(8, 48, Math.toRadians(180)))
+                    .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
 
                     // Move a little closer to park position
-                    .strafeTo(new Vector2d(8, 60))
+                    .strafeTo(new Vector2d(64, 54))
 
                     .build();
 
 
             // ----------------------------------------------------
-            // Trajectory Sequence for - Red Alliance - Audience Side - Default (when detection goes wrong)
+            // Trajectory Sequence for - Red Alliance - Scoretable Side - Default (when detection goes wrong)
             // ----------------------------------------------------
-            TrajectorySequence trajSeqRedAudienceZoneDefault = trajSeqRedAudienceZoneOne;
+            TrajectorySequence trajSeqRedAudienceZoneDefault = trajSeqRedAudienceZoneThree;
 
 
             // Wait for Start state (disable if using opModeInInit)
@@ -658,7 +658,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     } else {
 
                         // Red - Audience - Zone One
-                        sysDrivetrain.followTrajectorySequence(trajSeqRedAudienceZoneOne);
+                        sysDrivetrain.followTrajectorySequence(trajSeqRedAudienceZoneThree);
                     }
 
                     break;
@@ -674,7 +674,7 @@ public class opmodeAutonomousAudienceFull extends LinearOpMode {
                     } else {
 
                         // Red - Audience - Zone One
-                        sysDrivetrain.followTrajectorySequence(trajSeqRedAudienceZoneTwo);
+                        sysDrivetrain.followTrajectorySequence(trajSeqRedAudienceZoneThree);
                     }
 
                     break;

@@ -7,6 +7,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,8 +21,8 @@ import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.utilRobotConstants;
 
 @Config
-@Autonomous(name = "Autonomous - Scoretable - Full", group = "_auto", preselectTeleOp = "Teleop Main")
-//@Disabled
+@Autonomous(name = "Auto - Scoretable - Full", group = "_auto", preselectTeleOp = "Teleop Main")
+@Disabled
 public class opmodeAutonomousScoretableFull extends LinearOpMode {
     // ------------------------------------------------------------
     // System(s) - Define system and create instance of each system
@@ -228,7 +229,7 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     .addTemporalMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_SLOT_ONE, utilRobotConstants.IntakeArm.SERVO_SLOTONE_SETPOINT_OPEN);
                     })
-                    .waitSeconds(2)
+                    .waitSeconds(1)
 
                     // Back from zone
                     .lineTo(new Vector2d(-36, 38))
@@ -247,8 +248,8 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
@@ -266,15 +267,15 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
+                    // Back Away from the board
+                    .lineTo(new Vector2d(-40, 42))
+
                     // Lower Arm
                     .addTemporalMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
                         sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
                     })
                     .waitSeconds(2)
-
-                    // Back Away from the board
-                    .lineTo(new Vector2d(-40, 42))
 
                     // Drive to park location
                     .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
@@ -314,8 +315,8 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
@@ -333,15 +334,15 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
+                    // Back Away from the board
+                    .lineTo(new Vector2d(-38, 42))
+
                     // Lower Arm
                     .addTemporalMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
                         sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
                     })
                     .waitSeconds(2)
-
-                    // Back Away from the board
-                    .lineTo(new Vector2d(-38, 42))
 
                     // Drive to park location
                     .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
@@ -381,8 +382,8 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
@@ -400,15 +401,15 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
+                    // Back Away from the board
+                    .lineTo(new Vector2d(-34, 42))
+
                     // Lower Arm
                     .addTemporalMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
                         sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
                     })
                     .waitSeconds(2)
-
-                    // Back Away from the board
-                    .lineTo(new Vector2d(-34, 42))
 
                     // Drive to park location
                     .lineToSplineHeading(new Pose2d(-64, 42, Math.toRadians(0)))
@@ -452,8 +453,8 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
@@ -471,15 +472,15 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
+                    // Back Away from the board
+                    .lineTo(new Vector2d(40, 42))
+
                     // Lower Arm
                     .addTemporalMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
                         sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
                     })
                     .waitSeconds(2)
-
-                    // Back Away from the board
-                    .lineTo(new Vector2d(40, 42))
 
                     // Drive to park location
                     .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
@@ -519,8 +520,8 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
@@ -538,15 +539,15 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
+                    // Back Away from the board
+                    .lineTo(new Vector2d(38, 42))
+
                     // Lower Arm
                     .addTemporalMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
                         sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
                     })
                     .waitSeconds(2)
-
-                    // Back Away from the board
-                    .lineTo(new Vector2d(38, 42))
 
                     // Drive to park location
                     .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
@@ -586,8 +587,8 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     .addTemporalMarker(() -> {
 
                         // Raise Arm
-                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL);
-                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
+                        sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_AUTOPIXEL_LVL1);
+                        sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_AUTOPIXEL_LVL1, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MAX);
 
                     })
                     .waitSeconds(2)
@@ -605,15 +606,15 @@ public class opmodeAutonomousScoretableFull extends LinearOpMode {
                     })
                     .waitSeconds(2)
 
+                    // Back Away from the board
+                    .lineTo(new Vector2d(34, 42))
+
                     // Lower Arm
                     .addTemporalMarker(() -> {
                         sysIntakeArm.setIntakeServoPosition(utilRobotConstants.Configuration.LABEL_INTAKE_SERVO_PIVOT, utilRobotConstants.IntakeArm.SERVO_PIVOT_SETPOINT_HOME);
                         sysIntakeArm.moveArmToTarget(utilRobotConstants.IntakeArm.ARM_ENCODER_SETPOINT_HOME, utilRobotConstants.IntakeArm.ARM_MOTOR_OUTPUT_POWER_MIN);
                     })
                     .waitSeconds(2)
-
-                    // Back Away from the board
-                    .lineTo(new Vector2d(34, 42))
 
                     // Drive to park location
                     .lineToSplineHeading(new Pose2d(64, 42, Math.toRadians(180)))
