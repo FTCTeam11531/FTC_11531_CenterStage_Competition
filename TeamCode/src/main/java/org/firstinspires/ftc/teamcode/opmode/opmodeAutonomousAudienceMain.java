@@ -275,7 +275,7 @@ public class opmodeAutonomousAudienceMain extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(85)))
 
                     // Wait for other alliance to complete
-                    .waitSeconds(3)
+                    .waitSeconds(5)
 
                     // TODO: Check proper position
                     // Move to board - Position One
@@ -400,7 +400,7 @@ public class opmodeAutonomousAudienceMain extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(83)))
 
                     // Wait for other alliance to complete
-                    .waitSeconds(3)
+                    .waitSeconds(5)
 
                     // TODO: Set proper position
                     // Move to board - Position Two
@@ -524,7 +524,7 @@ public class opmodeAutonomousAudienceMain extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(-14, 48, Math.toRadians(83)))
 
                     // Wait for other alliance to complete
-                    .waitSeconds(3)
+                    .waitSeconds(5)
 
                     // TODO: Set proper position
                     // Move to board - Position Three
@@ -651,7 +651,7 @@ public class opmodeAutonomousAudienceMain extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(98)))
 
                     // Wait for other alliance to complete
-                    .waitSeconds(3)
+                    .waitSeconds(5)
 
                     // TODO: Set proper position
                     // Move to board - Position Three
@@ -776,7 +776,7 @@ public class opmodeAutonomousAudienceMain extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(98)))
 
                     // Wait for other alliance to complete
-                    .waitSeconds(3)
+                    .waitSeconds(5)
 
                     // TODO: Set proper position
                     // Move to board - Position Two
@@ -899,7 +899,7 @@ public class opmodeAutonomousAudienceMain extends LinearOpMode {
                     .lineToSplineHeading(new Pose2d(14, 48, Math.toRadians(98)))
 
                     // Wait for other alliance to complete
-                    .waitSeconds(3)
+                    .waitSeconds(5)
 
                     // TODO: Set proper position
                     // Move to board - Position One
